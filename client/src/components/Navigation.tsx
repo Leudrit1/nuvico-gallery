@@ -13,8 +13,8 @@ export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navigation = [
+    { name: "Home", href: "/" },
     { name: "Gallery", href: "/gallery" },
-    { name: "Artists", href: "/artists" },
     { name: "About", href: "/about" },
     { name: "Contact", href: "/contact" },
   ];
@@ -27,8 +27,8 @@ export default function Navigation() {
     <div className={`flex ${mobile ? 'flex-col space-y-4' : 'items-baseline space-x-6'}`}>
       {navigation.map((item) => (
         <Link key={item.name} href={item.href}>
-          <a 
-            className={`transition-colors px-3 py-2 text-sm font-medium ${
+          <span 
+            className={`transition-colors px-3 py-2 text-sm font-medium cursor-pointer ${
               location === item.href 
                 ? 'text-warm-brown' 
                 : 'text-charcoal hover:text-warm-brown'
@@ -36,7 +36,7 @@ export default function Navigation() {
             onClick={() => mobile && setMobileMenuOpen(false)}
           >
             {item.name}
-          </a>
+          </span>
         </Link>
       ))}
     </div>
@@ -65,16 +65,16 @@ export default function Navigation() {
 
             {user ? (
               <>
-                {/* Dashboard Link */}
-                <Link href="/dashboard">
+                {/* Admin Panel Link */}
+                <Link href="/admin">
                   <Button 
                     variant="ghost" 
                     className={`hidden sm:flex text-charcoal hover:text-warm-brown ${
-                      location === '/dashboard' ? 'text-warm-brown' : ''
+                      location === '/admin' ? 'text-warm-brown' : ''
                     }`}
                   >
-                    <Palette className="h-4 w-4 mr-2" />
-                    Dashboard
+                    <Settings className="h-4 w-4 mr-2" />
+                    Admin Panel
                   </Button>
                 </Link>
 
@@ -84,11 +84,11 @@ export default function Navigation() {
                     <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                       <Avatar className="h-8 w-8">
                         <AvatarImage 
-                          src={user.profileImageUrl || undefined} 
-                          alt={`${user.firstName} ${user.lastName}`} 
+                          src={(user as any)?.profileImageUrl || undefined} 
+                          alt="Admin" 
                         />
                         <AvatarFallback>
-                          {user.firstName?.[0]}{user.lastName?.[0]}
+                          A
                         </AvatarFallback>
                       </Avatar>
                     </Button>
@@ -96,23 +96,19 @@ export default function Navigation() {
                   <DropdownMenuContent className="w-56" align="end" forceMount>
                     <div className="flex items-center justify-start gap-2 p-2">
                       <div className="flex flex-col space-y-1 leading-none">
-                        <p className="font-medium">{user.firstName} {user.lastName}</p>
+                        <p className="font-medium">Admin</p>
                         <p className="w-[200px] truncate text-sm text-muted-foreground">
-                          {user.email}
+                          {(user as any)?.email || 'admin@nuvico.art'}
                         </p>
                       </div>
                     </div>
                     <DropdownMenuSeparator />
-                    <Link href="/dashboard">
+                    <Link href="/admin">
                       <DropdownMenuItem className="cursor-pointer">
-                        <User className="mr-2 h-4 w-4" />
-                        Dashboard
+                        <Settings className="mr-2 h-4 w-4" />
+                        Admin Panel
                       </DropdownMenuItem>
                     </Link>
-                    <DropdownMenuItem className="cursor-pointer">
-                      <Settings className="mr-2 h-4 w-4" />
-                      Settings
-                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
                       <LogOut className="mr-2 h-4 w-4" />
@@ -124,9 +120,11 @@ export default function Navigation() {
             ) : (
               <Button 
                 onClick={() => window.location.href = "/api/login"}
-                className="warm-brown text-white hover:golden-brown"
+                variant="outline"
+                size="sm"
+                className="border-warm-brown text-warm-brown hover:bg-warm-brown hover:text-white"
               >
-                Sign In
+                Admin Login
               </Button>
             )}
 
@@ -143,14 +141,14 @@ export default function Navigation() {
                   {user && (
                     <>
                       <div className="border-t pt-4">
-                        <Link href="/dashboard">
+                        <Link href="/admin">
                           <Button 
                             variant="ghost" 
                             className="w-full justify-start"
                             onClick={() => setMobileMenuOpen(false)}
                           >
-                            <Palette className="h-4 w-4 mr-2" />
-                            Dashboard
+                            <Settings className="h-4 w-4 mr-2" />
+                            Admin Panel
                           </Button>
                         </Link>
                       </div>

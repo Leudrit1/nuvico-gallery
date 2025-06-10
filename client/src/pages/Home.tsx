@@ -30,22 +30,22 @@ export default function Home() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="animate-slide-up">
               <h1 className="text-5xl lg:text-6xl font-bold text-charcoal mb-6 leading-tight">
-                Discover
-                <span className="text-warm-brown"> Exceptional</span>
-                <br />Art
+                Welcome to
+                <span className="text-warm-brown"> NUVICO</span>
+                <br />Art Gallery
               </h1>
               <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                NUVICO connects art enthusiasts with talented artists worldwide. Explore, collect, and invest in carefully curated paintings that speak to your soul.
+                NUVICO showcases exceptional contemporary artworks and unique paintings. Discover our carefully curated collection from talented artists around the world.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link href="/gallery">
                   <Button className="warm-brown text-white hover:golden-brown px-8 py-3">
-                    Explore Gallery
+                    View Our Collection
                   </Button>
                 </Link>
-                <Link href="/dashboard">
+                <Link href="/about">
                   <Button variant="outline" className="border-warm-brown text-warm-brown hover:bg-warm-brown hover:text-white px-8 py-3">
-                    Sell Your Art
+                    About Us
                   </Button>
                 </Link>
               </div>
@@ -67,9 +67,9 @@ export default function Home() {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-charcoal mb-4">Featured Artworks</h2>
+            <h2 className="text-4xl font-bold text-charcoal mb-4">Our Featured Collection</h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Handpicked masterpieces from our community of talented artists
+              Discover exceptional artworks carefully selected to showcase the finest contemporary art
             </p>
           </div>
 
@@ -95,47 +95,59 @@ export default function Home() {
           <div className="text-center mt-12">
             <Link href="/gallery">
               <Button variant="outline" className="border-warm-brown text-warm-brown hover:bg-warm-brown hover:text-white px-8 py-3">
-                View All Artworks
+                Explore Full Collection
               </Button>
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Featured Artists */}
+      {/* Company Showcase */}
       <section className="py-20 warm-beige">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-charcoal mb-4">Featured Artists</h2>
+            <h2 className="text-4xl font-bold text-charcoal mb-4">Why Choose NUVICO</h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Meet the talented creators behind our exceptional collection
+              Experience excellence in contemporary art curation and gallery services
             </p>
           </div>
 
-          {artistsLoading ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="text-center animate-pulse">
-                  <div className="w-32 h-32 bg-gray-300 rounded-full mx-auto mb-4"></div>
-                  <div className="h-4 bg-gray-300 rounded mb-2 w-3/4 mx-auto"></div>
-                  <div className="h-4 bg-gray-300 rounded w-1/2 mx-auto"></div>
+          <div className="grid md:grid-cols-3 gap-8">
+            <Card className="hover-lift">
+              <CardContent className="pt-6 text-center">
+                <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Palette className="h-6 w-6 text-warm-brown" />
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {artists.slice(0, 4).map((artist) => (
-                <ArtistCard key={artist.id} artist={artist} />
-              ))}
-            </div>
-          )}
+                <h3 className="font-semibold text-lg mb-2">Curated Excellence</h3>
+                <p className="text-gray-600 text-sm">
+                  Every piece in our collection is carefully selected for its artistic merit and quality
+                </p>
+              </CardContent>
+            </Card>
 
-          <div className="text-center mt-12">
-            <Link href="/artists">
-              <Button className="warm-brown text-white hover:golden-brown px-8 py-3">
-                Explore All Artists
-              </Button>
-            </Link>
+            <Card className="hover-lift">
+              <CardContent className="pt-6 text-center">
+                <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Globe className="h-6 w-6 text-warm-brown" />
+                </div>
+                <h3 className="font-semibold text-lg mb-2">Global Perspective</h3>
+                <p className="text-gray-600 text-sm">
+                  Featuring contemporary works from established and emerging artists worldwide
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="hover-lift">
+              <CardContent className="pt-6 text-center">
+                <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Award className="h-6 w-6 text-warm-brown" />
+                </div>
+                <h3 className="font-semibold text-lg mb-2">Professional Service</h3>
+                <p className="text-gray-600 text-sm">
+                  Expert consultation and personalized service for collectors and art enthusiasts
+                </p>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>

@@ -138,22 +138,20 @@ export default function Navigation() {
               <SheetContent side="right" className="w-[300px] sm:w-[400px]">
                 <div className="flex flex-col space-y-4 mt-4">
                   <NavLinks mobile />
-                  {user && (
-                    <>
-                      <div className="border-t pt-4">
-                        <Link href="/admin">
-                          <Button 
-                            variant="ghost" 
-                            className="w-full justify-start"
-                            onClick={() => setMobileMenuOpen(false)}
-                          >
-                            <Settings className="h-4 w-4 mr-2" />
-                            Admin Panel
-                          </Button>
-                        </Link>
-                      </div>
-                    </>
-                  )}
+                  {user ? (
+                    <div className="border-t pt-4">
+                      <Link href="/admin">
+                        <Button 
+                          variant="ghost" 
+                          className="w-full justify-start"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          <Settings className="h-4 w-4 mr-2" />
+                          Admin Panel
+                        </Button>
+                      </Link>
+                    </div>
+                  ) : null}
                 </div>
               </SheetContent>
             </Sheet>

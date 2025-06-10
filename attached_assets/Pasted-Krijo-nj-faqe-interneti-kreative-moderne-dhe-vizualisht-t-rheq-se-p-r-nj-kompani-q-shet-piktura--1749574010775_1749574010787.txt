@@ -1,0 +1,56 @@
+Krijo një faqe interneti kreative, moderne dhe vizualisht tërheqëse për një kompani që shet piktura, me emrin NUVICO. Kompania synon artistët dhe pasionantët e artit që kërkojnë të blejnë apo të shesin piktura cilësore.
+
+Website-i duhet të jetë i ngjashëm në strukturë dhe përvojë përdorimi me https://kunstfoyer.ch, por me ndryshime në dizajn, paletë ngjyrash dhe përmbajtje, për të shmangur një kopjim të drejtpërdrejtë.
+
+Këtu janë kërkesat specifike:
+
+🎨 Tematika dhe Dizajni
+Tema e faqes: Shitja dhe promovimi i artit vizual (piktura).
+
+Përdor ngjyra të lehta, elegante dhe të qeta që frymëzojnë kreativitet dhe qetësi (p.sh. beige, e bardhë e ngrohtë, gri të butë, pastelë).
+
+Dizajni duhet të jetë minimalist, modern, dhe estetikisht i pastër, me hapësira të bollshme dhe tipografi të lexueshme.
+
+Shto efekte subtile animacioni dhe lëvizjeje për të sjellë ndjesinë e një galerie arti moderne.
+
+🔧 Funksionalitete teknike
+Struktura e faqes:
+
+Faqja Kryesore me prezantimin e kompanisë NUVICO.
+
+Galeria e pikturave (me filtra për artist, stil, çmim, përmasë).
+
+Faqe individuale për secilën pikturë (me përshkrim, foto të mëdha, dhe çmim).
+
+Faqe për artistët që shesin në platformë.
+
+Faqja "Rreth Nesh" dhe "Kontakt".
+
+Shto një sistem login/register për përdoruesit (artistët apo klientët).
+
+Përdoruesit e regjistruar duhet të kenë mundësinë që:
+
+Të shtojnë piktura të reja për shitje.
+
+Të editojnë apo fshijnë pikturat e tyre ekzistuese.
+
+Të kenë një panel të personalizuar për menaxhimin e artikujve të tyre.
+
+💻 Teknologjitë që preferohen
+Website-i mund të ndërtohet me HTML, CSS, JavaScript për pjesën front-end.
+
+Përdor framework si React për një përvojë interaktive dhe dinamike.
+
+Për pjesën e login dhe menaxhimit të përmbajtjes, përdor teknologji si Firebase, Supabase apo një CMS të lehtë si Strapi (ose alternativa që AI sugjeron).
+
+🎯 Objektiva
+Website-i duhet të jetë i përshtatur për desktop dhe mobile (responsive).
+
+Faqja duhet të jetë e optimizuar për SEO dhe të ngarkohet shpejt.
+
+Qëllimi kryesor është shitja dhe promovimi i pikturave dhe artistëve, ndaj vizitorët duhet të ndihen si në një ekspozitë online.
+
+📌 Shënime shtesë
+Mos e kopjo kodin apo dizajnin nga kunstfoyer.ch, por frymëzohu nga ai në aspektin e organizimit dhe stilit të faqes.
+
+Shto një identitet të veçantë për NUVICO, duke përfshirë një logo të thjeshtë dhe elegante (AI mund të gjenerojë një të tillë).

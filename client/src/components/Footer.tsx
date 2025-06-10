@@ -36,28 +36,28 @@ export default function Footer() {
           <div>
             <h3 className="font-semibold mb-4">Explore</h3>
             <ul className="space-y-2 text-gray-300">
-              <li><Link href="/gallery"><a className="hover:text-warm-brown transition-colors">Gallery</a></Link></li>
-              <li><Link href="/artists"><a className="hover:text-warm-brown transition-colors">Artists</a></Link></li>
-              <li><a href="#" className="hover:text-warm-brown transition-colors">Collections</a></li>
-              <li><a href="#" className="hover:text-warm-brown transition-colors">New Arrivals</a></li>
+              <li><Link href="/gallery"><span className="hover:text-warm-brown transition-colors cursor-pointer">Gallery</span></Link></li>
+              <li><Link href="/"><span className="hover:text-warm-brown transition-colors cursor-pointer">Collections</span></Link></li>
+              <li><Link href="/about"><span className="hover:text-warm-brown transition-colors cursor-pointer">About Gallery</span></Link></li>
+              <li><Link href="/contact"><span className="hover:text-warm-brown transition-colors cursor-pointer">Visit Us</span></Link></li>
             </ul>
           </div>
           <div>
-            <h3 className="font-semibold mb-4">For Artists</h3>
+            <h3 className="font-semibold mb-4">Services</h3>
             <ul className="space-y-2 text-gray-300">
-              <li><Link href="/dashboard"><a className="hover:text-warm-brown transition-colors">Join NUVICO</a></Link></li>
-              <li><a href="#" className="hover:text-warm-brown transition-colors">Artist Resources</a></li>
-              <li><a href="#" className="hover:text-warm-brown transition-colors">Commission Info</a></li>
-              <li><a href="#" className="hover:text-warm-brown transition-colors">Success Stories</a></li>
+              <li><span className="hover:text-warm-brown transition-colors cursor-pointer">Art Consultation</span></li>
+              <li><span className="hover:text-warm-brown transition-colors cursor-pointer">Gallery Services</span></li>
+              <li><span className="hover:text-warm-brown transition-colors cursor-pointer">Private Viewings</span></li>
+              <li><span className="hover:text-warm-brown transition-colors cursor-pointer">Art Advisory</span></li>
             </ul>
           </div>
           <div>
             <h3 className="font-semibold mb-4">Support</h3>
             <ul className="space-y-2 text-gray-300">
-              <li><a href="#" className="hover:text-warm-brown transition-colors">Help Center</a></li>
-              <li><Link href="/contact"><a className="hover:text-warm-brown transition-colors">Contact Us</a></Link></li>
-              <li><a href="#" className="hover:text-warm-brown transition-colors">Shipping Info</a></li>
-              <li><a href="#" className="hover:text-warm-brown transition-colors">Returns</a></li>
+              <li><span className="hover:text-warm-brown transition-colors cursor-pointer">Gallery Hours</span></li>
+              <li><Link href="/contact"><span className="hover:text-warm-brown transition-colors cursor-pointer">Contact Us</span></Link></li>
+              <li><span className="hover:text-warm-brown transition-colors cursor-pointer">Location</span></li>
+              <li><span className="hover:text-warm-brown transition-colors cursor-pointer">Appointments</span></li>
             </ul>
           </div>
         </div>

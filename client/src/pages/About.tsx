@@ -15,7 +15,7 @@ export default function About() {
           <section className="text-center mb-20">
             <h1 className="text-5xl font-bold text-charcoal mb-6">About NUVICO</h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Founded by art enthusiasts for art enthusiasts, NUVICO bridges the gap between talented artists and passionate collectors. We believe that exceptional art should be accessible to everyone, regardless of location or background.
+              NUVICO Gallery is a premier destination for contemporary art, featuring a carefully curated collection of exceptional works. Our gallery showcases outstanding pieces that represent the finest in modern artistic expression and craftsmanship.
             </p>
           </section>
 
@@ -34,29 +34,29 @@ export default function About() {
             <div>
               <h2 className="text-4xl font-bold text-charcoal mb-6">Our Story</h2>
               <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                Our carefully curated platform showcases original paintings from emerging and established artists worldwide, ensuring quality, authenticity, and artistic integrity in every piece.
+                NUVICO Gallery was established with a vision to create an exceptional space for contemporary art appreciation. Our collection features carefully selected works that demonstrate outstanding artistic merit and creative vision.
               </p>
               <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                We started NUVICO with a simple mission: to create a space where art thrives, artists are celebrated, and collectors can discover their next treasured piece.
+                We are dedicated to presenting art that inspires, challenges, and enriches the cultural landscape, providing our visitors with meaningful encounters with contemporary artistic expression.
               </p>
               
               {/* Stats */}
               <div className="grid grid-cols-2 gap-6">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-warm-brown mb-2">500+</div>
-                  <div className="text-gray-600">Artists</div>
+                  <div className="text-3xl font-bold text-warm-brown mb-2">15+</div>
+                  <div className="text-gray-600">Years Experience</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-warm-brown mb-2">2,400+</div>
-                  <div className="text-gray-600">Artworks</div>
+                  <div className="text-3xl font-bold text-warm-brown mb-2">200+</div>
+                  <div className="text-gray-600">Curated Works</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-warm-brown mb-2">50+</div>
-                  <div className="text-gray-600">Countries</div>
+                  <div className="text-3xl font-bold text-warm-brown mb-2">25+</div>
+                  <div className="text-gray-600">Exhibitions</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-warm-brown mb-2">98%</div>
-                  <div className="text-gray-600">Satisfaction</div>
+                  <div className="text-3xl font-bold text-warm-brown mb-2">5000+</div>
+                  <div className="text-gray-600">Visitors</div>
                 </div>
               </div>
             </div>

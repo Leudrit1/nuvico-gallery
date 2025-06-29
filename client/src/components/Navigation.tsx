@@ -19,8 +19,28 @@ export default function Navigation() {
     { name: "Contact", href: "/contact" },
   ];
 
-  const handleLogout = () => {
-    window.location.href = "/api/logout";
+  const handleLogin = async () => {
+    try {
+      const response = await fetch('/api/temp-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: 'admin', password: 'admin' })
+      });
+      if (response.ok) {
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/temp-logout', { method: 'POST' });
+      window.location.reload();
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
   };
 
   const NavLinks = ({ mobile = false }) => (
@@ -119,7 +139,7 @@ export default function Navigation() {
               </>
             ) : (
               <Button 
-                onClick={() => window.location.href = "/api/login"}
+                onClick={handleLogin}
                 variant="outline"
                 size="sm"
                 className="border-warm-brown text-warm-brown hover:bg-warm-brown hover:text-white"

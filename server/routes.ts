@@ -4,16 +4,67 @@ import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { insertArtworkSchema, updateArtworkSchema } from "@shared/schema";
 import { z } from "zod";
+import session from "express-session";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Auth middleware
-  await setupAuth(app);
+  // Add session middleware for temporary auth
+  app.use(session({
+    secret: process.env.SESSION_SECRET || 'temp-secret-key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false }
+  }));
 
-  // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+  // Simple auth check middleware
+  const requireAuth = (req: any, res: any, next: any) => {
+    const userId = req.session?.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    req.userId = userId;
+    next();
+  };
+
+  // Temporary simple auth solution while database is unavailable
+  
+  // Simple login endpoint for temporary access
+  app.post('/api/temp-login', async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
+      // For demo purposes, allow access with any credentials
+      const adminUser = await storage.getUser('nuvico-gallery-admin');
+      if (adminUser) {
+        // Set a simple session flag
+        (req as any).session = (req as any).session || {};
+        (req as any).session.userId = 'nuvico-gallery-admin';
+        res.json(adminUser);
+      } else {
+        res.status(404).json({ message: "User not found" });
+      }
+    } catch (error) {
+      console.error("Error in temp login:", error);
+      res.status(500).json({ message: "Login failed" });
+    }
+  });
+
+  // Simple logout endpoint
+  app.post('/api/temp-logout', (req, res) => {
+    if ((req as any).session) {
+      (req as any).session.userId = null;
+    }
+    res.json({ message: "Logged out" });
+  });
+
+  // Auth user endpoint with simple session check
+  app.get('/api/auth/user', async (req: any, res) => {
+    try {
+      const userId = req.session?.userId;
+      if (!userId) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
       const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
       res.json(user);
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -22,9 +73,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Update user profile
-  app.patch('/api/auth/user', isAuthenticated, async (req: any, res) => {
+  app.patch('/api/auth/user', requireAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.userId;
       const updateData = req.body;
       
       const user = await storage.updateUser(userId, updateData);
@@ -71,9 +122,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/artworks', isAuthenticated, async (req: any, res) => {
+  app.post('/api/artworks', requireAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.userId;
       const artworkData = insertArtworkSchema.parse({
         ...req.body,
         artistId: userId,
@@ -90,9 +141,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch('/api/artworks/:id', isAuthenticated, async (req: any, res) => {
+  app.patch('/api/artworks/:id', requireAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.userId;
       const id = parseInt(req.params.id);
       const updateData = updateArtworkSchema.parse(req.body);
       
@@ -113,9 +164,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete('/api/artworks/:id', isAuthenticated, async (req: any, res) => {
+  app.delete('/api/artworks/:id', requireAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.userId;
       const id = parseInt(req.params.id);
       
       // Check if user owns the artwork

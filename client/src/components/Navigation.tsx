@@ -1,16 +1,20 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
+import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 import { Search, Menu, User, Settings, LogOut, Palette } from "lucide-react";
 
 export default function Navigation() {
   const { user } = useAuth();
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { toast } = useToast();
 
   const navigation = [
     { name: "Home", href: "/" },
@@ -19,28 +23,29 @@ export default function Navigation() {
     { name: "Contact", href: "/contact" },
   ];
 
-  const handleLogin = async () => {
-    try {
-      const response = await fetch('/api/temp-login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: 'admin', password: 'admin' })
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      return await apiRequest("/api/auth/logout", "POST");
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Logged out successfully!",
       });
-      if (response.ok) {
-        window.location.reload();
-      }
-    } catch (error) {
-      console.error('Login failed:', error);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await fetch('/api/temp-logout', { method: 'POST' });
+      setLocation("/");
       window.location.reload();
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: "Failed to logout",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleLogout = () => {
+    logoutMutation.mutate();
   };
 
   const NavLinks = ({ mobile = false }) => (
@@ -138,14 +143,15 @@ export default function Navigation() {
                 </DropdownMenu>
               </>
             ) : (
-              <Button 
-                onClick={handleLogin}
-                variant="outline"
-                size="sm"
-                className="border-warm-brown text-warm-brown hover:bg-warm-brown hover:text-white"
-              >
-                Admin Login
-              </Button>
+              <Link href="/login">
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className="border-warm-brown text-warm-brown hover:bg-warm-brown hover:text-white"
+                >
+                  Sign In
+                </Button>
+              </Link>
             )}
 
             {/* Mobile Menu */}
@@ -159,7 +165,7 @@ export default function Navigation() {
                 <div className="flex flex-col space-y-4 mt-4">
                   <NavLinks mobile />
                   {user ? (
-                    <div className="border-t pt-4">
+                    <div className="border-t pt-4 space-y-2">
                       <Link href="/admin">
                         <Button 
                           variant="ghost" 
@@ -170,8 +176,32 @@ export default function Navigation() {
                           Admin Panel
                         </Button>
                       </Link>
+                      <Button 
+                        variant="ghost" 
+                        className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+                        onClick={() => {
+                          setMobileMenuOpen(false);
+                          handleLogout();
+                        }}
+                        disabled={logoutMutation.isPending}
+                      >
+                        <LogOut className="h-4 w-4 mr-2" />
+                        Sign Out
+                      </Button>
                     </div>
-                  ) : null}
+                  ) : (
+                    <div className="border-t pt-4">
+                      <Link href="/login">
+                        <Button 
+                          variant="outline" 
+                          className="w-full border-warm-brown text-warm-brown hover:bg-warm-brown hover:text-white"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          Sign In
+                        </Button>
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </SheetContent>
             </Sheet>

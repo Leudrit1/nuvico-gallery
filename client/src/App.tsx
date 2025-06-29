@@ -11,6 +11,7 @@ import Artists from "@/pages/Artists";
 import ArtistProfile from "@/pages/ArtistProfile";
 import Dashboard from "@/pages/Dashboard";
 import Landing from "@/pages/Landing";
+import Login from "@/pages/Login";
 import About from "@/pages/About";
 import Contact from "@/pages/Contact";
 import NotFound from "@/pages/not-found";
@@ -22,6 +23,7 @@ function Router() {
     <Switch>
       {/* Public routes - always accessible */}
       <Route path="/" component={Home} />
+      <Route path="/login" component={Login} />
       <Route path="/gallery" component={Gallery} />
       <Route path="/artworks/:id" component={ArtworkDetail} />
       <Route path="/about" component={About} />

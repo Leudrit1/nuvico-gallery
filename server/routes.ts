@@ -25,33 +25,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     next();
   };
 
-  // Temporary simple auth solution while database is unavailable
+  // Authentication endpoints
   
-  // Simple login endpoint for temporary access
-  app.post('/api/temp-login', async (req, res) => {
+  // Login endpoint
+  app.post('/api/auth/login', async (req, res) => {
     try {
-      // For demo purposes, allow access with any credentials
-      const adminUser = await storage.getUser('nuvico-gallery-admin');
-      if (adminUser) {
-        // Set a simple session flag
-        (req as any).session = (req as any).session || {};
-        (req as any).session.userId = 'nuvico-gallery-admin';
-        res.json(adminUser);
+      const { username, password } = req.body;
+      
+      // Simple credential validation
+      if (username === 'admin' && password === 'password') {
+        const adminUser = await storage.getUser('nuvico-gallery-admin');
+        if (adminUser) {
+          // Set session
+          (req as any).session = (req as any).session || {};
+          (req as any).session.userId = 'nuvico-gallery-admin';
+          res.json(adminUser);
+        } else {
+          res.status(404).json({ message: "User not found" });
+        }
       } else {
-        res.status(404).json({ message: "User not found" });
+        res.status(401).json({ message: "Invalid username or password" });
       }
     } catch (error) {
-      console.error("Error in temp login:", error);
+      console.error("Error in login:", error);
       res.status(500).json({ message: "Login failed" });
     }
   });
 
-  // Simple logout endpoint
-  app.post('/api/temp-logout', (req, res) => {
-    if ((req as any).session) {
-      (req as any).session.userId = null;
+  // Logout endpoint
+  app.post('/api/auth/logout', (req, res) => {
+    try {
+      if ((req as any).session) {
+        (req as any).session.destroy((err: any) => {
+          if (err) {
+            console.error("Error destroying session:", err);
+            return res.status(500).json({ message: "Logout failed" });
+          }
+          res.json({ message: "Logged out successfully" });
+        });
+      } else {
+        res.json({ message: "Already logged out" });
+      }
+    } catch (error) {
+      console.error("Error in logout:", error);
+      res.status(500).json({ message: "Logout failed" });
     }
-    res.json({ message: "Logged out" });
   });
 
   // Auth user endpoint with simple session check

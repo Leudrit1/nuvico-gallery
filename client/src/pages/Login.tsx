@@ -99,44 +99,22 @@ export default function Login() {
 
               <Button
                 type="submit"
-                className="w-full h-12 bg-warm-brown hover:bg-golden-brown text-white font-semibold text-base transition-all duration-200 transform hover:scale-[1.02]"
+                className="w-full h-14 bg-gradient-to-r from-warm-brown via-golden-brown to-warm-brown hover:from-golden-brown hover:via-warm-brown hover:to-golden-brown text-white font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-0.5 border-2 border-warm-brown/20"
                 disabled={loginMutation.isPending}
               >
                 {loginMutation.isPending ? (
-                  <div className="flex items-center space-x-2">
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <div className="flex items-center justify-center space-x-3">
+                    <div className="w-5 h-5 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
                     <span>Signing in...</span>
                   </div>
                 ) : (
-                  <div className="flex items-center space-x-2">
-                    <LogIn className="h-4 w-4" />
-                    <span>Sign In</span>
+                  <div className="flex items-center justify-center space-x-3">
+                    <LogIn className="h-5 w-5" />
+                    <span>Sign In to Gallery</span>
                   </div>
                 )}
               </Button>
             </form>
-
-            <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-gray-300" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Or continue with</span>
-                </div>
-              </div>
-              
-              <Button
-                type="button"
-                onClick={() => window.location.href = "/api/login"}
-                className="w-full mt-4 h-12 bg-gradient-to-r from-warm-brown to-golden-brown hover:from-golden-brown hover:to-warm-brown text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
-              >
-                <div className="flex items-center justify-center space-x-2">
-                  <ExternalLink className="h-4 w-4" />
-                  <span>Continue with Replit</span>
-                </div>
-              </Button>
-            </div>
 
             <div className="mt-8 text-center">
               <div className="bg-gray-50 rounded-lg p-4">

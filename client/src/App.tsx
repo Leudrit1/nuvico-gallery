@@ -23,9 +23,12 @@ function Router() {
     <Switch>
       {/* Public routes - always accessible */}
       <Route path="/" component={Home} />
+      <Route path="/home" component={Home} />
       <Route path="/login" component={Login} />
       <Route path="/gallery" component={Gallery} />
       <Route path="/artworks/:id" component={ArtworkDetail} />
+      <Route path="/artists" component={Artists} />
+      <Route path="/artists/:id" component={ArtistProfile} />
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
       

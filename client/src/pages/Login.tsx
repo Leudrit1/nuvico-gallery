@@ -139,12 +139,18 @@ export default function Login() {
             </div>
 
             <div className="mt-8 text-center">
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h3 className="font-semibold text-gray-700 mb-2">Demo Credentials</h3>
-                <p className="text-sm text-gray-600">
-                  <strong>Username:</strong> admin<br />
-                  <strong>Password:</strong> password
-                </p>
+              <div className="bg-gradient-to-br from-warm-brown/5 to-golden-brown/5 border-2 border-warm-brown/10 rounded-lg p-4 hover:border-warm-brown/20 transition-all duration-200">
+                <h3 className="font-semibold text-warm-brown mb-2 flex items-center justify-center gap-2">
+                  <span className="w-2 h-2 bg-warm-brown rounded-full"></span>
+                  Demo Credentials
+                  <span className="w-2 h-2 bg-warm-brown rounded-full"></span>
+                </h3>
+                <div className="bg-white/60 rounded-md p-3 border border-warm-brown/10">
+                  <p className="text-sm text-charcoal font-medium">
+                    <span className="text-warm-brown font-semibold">Username:</span> admin<br />
+                    <span className="text-warm-brown font-semibold">Password:</span> password
+                  </p>
+                </div>
               </div>
             </div>
 

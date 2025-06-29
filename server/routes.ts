@@ -211,9 +211,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get user's artworks
-  app.get('/api/my-artworks', isAuthenticated, async (req: any, res) => {
+  app.get('/api/my-artworks', requireAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.userId;
       const artworks = await storage.getArtworksByArtist(userId);
       res.json(artworks);
     } catch (error) {

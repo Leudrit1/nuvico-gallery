@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Palette, LogIn } from "lucide-react";
+import { LogIn, ExternalLink } from "lucide-react";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -56,7 +56,7 @@ export default function Login() {
           <CardHeader className="text-center pb-8 pt-8">
             <div className="flex justify-center mb-4">
               <div className="w-16 h-16 bg-warm-brown/10 rounded-2xl flex items-center justify-center">
-                <Palette className="h-8 w-8 text-warm-brown" />
+                <LogIn className="h-8 w-8 text-warm-brown" />
               </div>
             </div>
             <CardTitle className="text-3xl font-bold text-charcoal mb-2">
@@ -129,11 +129,11 @@ export default function Login() {
               <Button
                 type="button"
                 onClick={() => window.location.href = "/api/login"}
-                className="w-full mt-4 h-12 bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+                className="w-full mt-4 h-12 bg-gradient-to-r from-warm-brown to-golden-brown hover:from-golden-brown hover:to-warm-brown text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
               >
-                <div className="flex items-center space-x-2">
-                  <Palette className="h-4 w-4" />
-                  <span>Login with Replit</span>
+                <div className="flex items-center justify-center space-x-2">
+                  <ExternalLink className="h-4 w-4" />
+                  <span>Continue with Replit</span>
                 </div>
               </Button>
             </div>

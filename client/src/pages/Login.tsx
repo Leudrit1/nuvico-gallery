@@ -151,7 +151,7 @@ export default function Login() {
             <div className="mt-6 text-center">
               <button
                 onClick={() => setLocation("/")}
-                className="text-warm-brown hover:text-golden-brown font-medium transition-colors"
+                className="px-4 py-2 rounded-lg border-2 border-warm-brown/20 text-warm-brown hover:bg-warm-brown hover:text-white font-medium transition-all duration-200 hover:shadow-md"
               >
                 ← Back to Gallery
               </button>

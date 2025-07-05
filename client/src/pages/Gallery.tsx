@@ -149,43 +149,52 @@ export default function Gallery() {
 
           {/* Artworks Display */}
           {isLoading ? (
-            <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-8 space-y-8">
-              {[...Array(12)].map((_, i) => (
-                <div key={i} className="break-inside-avoid animate-pulse mb-8">
-                  <div className={`bg-gray-300 rounded-xl mb-4 ${i % 3 === 0 ? 'h-80' : i % 3 === 1 ? 'h-64' : 'h-72'}`}></div>
-                  <div className="h-4 bg-gray-300 rounded mb-2"></div>
-                  <div className="h-4 bg-gray-300 rounded w-2/3 mb-2"></div>
-                  <div className="h-4 bg-gray-300 rounded w-1/3"></div>
-                </div>
-              ))}
+            <div className="flex justify-center">
+              <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-8 space-y-8 max-w-7xl">
+                {[...Array(12)].map((_, i) => (
+                  <div key={i} className="break-inside-avoid animate-pulse mb-8">
+                    <div className={`bg-gray-300 rounded-xl mb-4 ${i % 3 === 0 ? 'h-80' : i % 3 === 1 ? 'h-64' : 'h-72'}`}></div>
+                    <div className="h-4 bg-gray-300 rounded mb-2"></div>
+                    <div className="h-4 bg-gray-300 rounded w-2/3 mb-2"></div>
+                    <div className="h-4 bg-gray-300 rounded w-1/3"></div>
+                  </div>
+                ))}
+              </div>
             </div>
           ) : artworks.length > 0 ? (
-            <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-8">
-              {artworks.map((artwork, index) => (
-                <div key={artwork.id} className="break-inside-avoid mb-8">
-                  <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-                    <div className="aspect-[4/5] overflow-hidden">
-                      <img 
-                        src={artwork.imageUrl} 
-                        alt={artwork.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300"></div>
-                    </div>
-                    
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                      <h3 className="font-bold text-white text-lg mb-1">{artwork.title}</h3>
-                      <p className="text-white/80 text-sm mb-2">{artwork.style} • {artwork.medium}</p>
-                      <div className="flex justify-between items-center">
-                        <span className="text-white font-semibold">${artwork.price}</span>
-                        <div className="flex gap-1">
-                          <span className="text-white/60 text-xs">{artwork.width}" × {artwork.height}"</span>
+            <div className="flex justify-center">
+              <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-8 max-w-7xl">
+                {artworks.map((artwork, index) => (
+                  <div key={artwork.id} className="break-inside-avoid mb-8">
+                    <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-white">
+                      <div className="aspect-[4/5] overflow-hidden">
+                        <img 
+                          src={artwork.imageUrl} 
+                          alt={artwork.title}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300"></div>
+                      </div>
+                      
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-6 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                        <h3 className="font-bold text-white text-lg mb-1">{artwork.title}</h3>
+                        <p className="text-white/90 text-sm mb-2">by {artwork.artist.firstName} {artwork.artist.lastName}</p>
+                        <div className="flex justify-between items-center">
+                          <span className="text-white font-semibold text-lg">${parseFloat(artwork.price).toLocaleString()}</span>
+                          <div className="flex flex-col items-end">
+                            {artwork.style && (
+                              <span className="text-white/70 text-xs mb-1">{artwork.style}</span>
+                            )}
+                            {artwork.width && artwork.height && (
+                              <span className="text-white/60 text-xs">{artwork.width}" × {artwork.height}"</span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           ) : (
             <div className="text-center py-20">

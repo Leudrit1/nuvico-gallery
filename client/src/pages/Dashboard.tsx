@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import { isUnauthorizedError } from "@/lib/authUtils";
-import { Plus, Edit, Trash2, Eye, DollarSign, Palette, User } from "lucide-react";
+import { Plus, Edit, Trash2, Palette, User } from "lucide-react";
 import type { Artwork, User as UserType } from "@shared/schema";
 
 export default function Dashboard() {
@@ -119,12 +119,7 @@ export default function Dashboard() {
     );
   }
 
-  const stats = {
-    total: myArtworks.length,
-    available: myArtworks.filter(a => a.isAvailable).length,
-    sold: myArtworks.filter(a => !a.isAvailable).length,
-    revenue: myArtworks.filter(a => !a.isAvailable).reduce((sum, a) => sum + parseFloat(a.price), 0)
-  };
+  
 
   return (
     <div className="min-h-screen bg-background">
@@ -157,57 +152,6 @@ export default function Dashboard() {
 
           {user?.isArtist && (
             <>
-              {/* Stats Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">Total Artworks</p>
-                        <p className="text-3xl font-bold text-charcoal">{stats.total}</p>
-                      </div>
-                      <Palette className="h-8 w-8 text-warm-brown" />
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">Available</p>
-                        <p className="text-3xl font-bold text-green-600">{stats.available}</p>
-                      </div>
-                      <Eye className="h-8 w-8 text-green-600" />
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">Sold</p>
-                        <p className="text-3xl font-bold text-blue-600">{stats.sold}</p>
-                      </div>
-                      <Badge className="bg-blue-100 text-blue-800">{stats.sold}</Badge>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium text-gray-600">Revenue</p>
-                        <p className="text-3xl font-bold text-warm-brown">${stats.revenue.toLocaleString()}</p>
-                      </div>
-                      <DollarSign className="h-8 w-8 text-warm-brown" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
               {/* Artworks Section */}
               <Card>
                 <CardHeader>

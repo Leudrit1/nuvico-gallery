@@ -26,7 +26,7 @@ export default function Dashboard() {
 
   const deleteArtworkMutation = useMutation({
     mutationFn: async (id: number) => {
-      await apiRequest("DELETE", `/api/artworks/${id}`);
+      await apiRequest(`/api/artworks/${id}`, "DELETE");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/my-artworks"] });
@@ -57,7 +57,7 @@ export default function Dashboard() {
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: Partial<UserType>) => {
-      await apiRequest("PATCH", "/api/auth/user", data);
+      await apiRequest("/api/auth/user", "PATCH", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });

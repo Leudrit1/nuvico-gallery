@@ -13,7 +13,7 @@ import type { ArtworkWithArtist, User } from "@shared/schema";
 
 export default function Home() {
   const { data: featuredArtworks = [], isLoading: artworksLoading } = useQuery<ArtworkWithArtist[]>({
-    queryKey: ["/api/artworks?featured=true"]
+    queryKey: ["/api/artworks", { featured: true }]
   });
 
   const { data: artists = [], isLoading: artistsLoading } = useQuery<User[]>({

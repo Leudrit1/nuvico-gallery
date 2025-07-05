@@ -149,7 +149,7 @@ class MemoryStorage implements IStorage {
       createdAt: new Date(),
       updatedAt: new Date()
     };
-    
+
     if (existingIndex >= 0) {
       this.users[existingIndex] = { ...this.users[existingIndex], ...user };
       return this.users[existingIndex];
@@ -162,7 +162,7 @@ class MemoryStorage implements IStorage {
   async updateUser(id: string, data: Partial<User>): Promise<User> {
     const index = this.users.findIndex(u => u.id === id);
     if (index === -1) throw new Error('User not found');
-    
+
     this.users[index] = { ...this.users[index], ...data, updatedAt: new Date() };
     return this.users[index];
   }
@@ -174,11 +174,11 @@ class MemoryStorage implements IStorage {
   async getArtistWithArtworks(id: string): Promise<(User & { artworks: ArtworkWithArtist[] }) | undefined> {
     const artist = this.users.find(u => u.id === id);
     if (!artist) return undefined;
-    
+
     const artworks = this.artworks
       .filter(a => a.artistId === id)
       .map(artwork => ({ ...artwork, artist }));
-    
+
     return { ...artist, artworks };
   }
 
@@ -188,9 +188,10 @@ class MemoryStorage implements IStorage {
     minPrice?: number;
     maxPrice?: number;
     featured?: boolean;
+    available?: boolean;
   }): Promise<ArtworkWithArtist[]> {
     let filtered = this.artworks;
-    
+
     if (filters) {
       if (filters.style) {
         filtered = filtered.filter(a => a.style === filters.style);
@@ -207,8 +208,11 @@ class MemoryStorage implements IStorage {
       if (filters.featured !== undefined) {
         filtered = filtered.filter(a => a.isFeatured === filters.featured);
       }
+      if (filters.available !== undefined) {
+        filtered = filtered.filter(a => a.isAvailable === filters.available);
+      }
     }
-    
+
     return filtered.map(artwork => {
       const artist = this.users.find(u => u.id === artwork.artistId)!;
       return { ...artwork, artist };
@@ -218,7 +222,7 @@ class MemoryStorage implements IStorage {
   async getArtworkById(id: number): Promise<ArtworkWithArtist | undefined> {
     const artwork = this.artworks.find(a => a.id === id);
     if (!artwork) return undefined;
-    
+
     const artist = this.users.find(u => u.id === artwork.artistId)!;
     return { ...artwork, artist };
   }
@@ -253,7 +257,7 @@ class MemoryStorage implements IStorage {
   async updateArtwork(id: number, data: UpdateArtwork): Promise<Artwork> {
     const index = this.artworks.findIndex(a => a.id === id);
     if (index === -1) throw new Error('Artwork not found');
-    
+
     this.artworks[index] = { ...this.artworks[index], ...data, updatedAt: new Date() };
     return this.artworks[index];
   }
@@ -261,7 +265,7 @@ class MemoryStorage implements IStorage {
   async deleteArtwork(id: number): Promise<void> {
     const index = this.artworks.findIndex(a => a.id === id);
     if (index === -1) throw new Error('Artwork not found');
-    
+
     this.artworks.splice(index, 1);
   }
 }
@@ -282,6 +286,7 @@ export interface IStorage {
     minPrice?: number;
     maxPrice?: number;
     featured?: boolean;
+    available?: boolean;
   }): Promise<ArtworkWithArtist[]>;
   getArtworkById(id: number): Promise<ArtworkWithArtist | undefined>;
   getArtworksByArtist(artistId: string): Promise<Artwork[]>;
@@ -372,6 +377,7 @@ export class DatabaseStorage implements IStorage {
     minPrice?: number;
     maxPrice?: number;
     featured?: boolean;
+    available?: boolean;
   }): Promise<ArtworkWithArtist[]> {
     let query = db
       .select({
@@ -415,6 +421,9 @@ export class DatabaseStorage implements IStorage {
 
     if (filters?.featured !== undefined) {
       conditions.push(eq(artworks.isFeatured, filters.featured));
+    }
+    if (filters?.available !== undefined) {
+      conditions.push(eq(artworks.isAvailable, filters.available));
     }
 
     if (conditions.length > 0) {

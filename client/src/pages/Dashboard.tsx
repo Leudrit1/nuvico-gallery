@@ -86,6 +86,34 @@ export default function Dashboard() {
     },
   });
 
+  const addArtworkMutation = useMutation({
+    mutationFn: async (data: any) => {
+      await apiRequest("/api/artworks", "POST", data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/my-artworks"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/artworks"] });
+    },
+    onError: (error) => {
+      if (isUnauthorizedError(error)) {
+        toast({
+          title: "Unauthorized",
+          description: "You are logged out. Logging in again...",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 500);
+        return;
+      }
+      toast({
+        title: "Error",
+        description: "Failed to create artwork",
+        variant: "destructive",
+      });
+    },
+  });
+
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!authLoading && !user) {
@@ -119,12 +147,12 @@ export default function Dashboard() {
     );
   }
 
-  
+
 
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      
+
       <div className="pt-24 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}

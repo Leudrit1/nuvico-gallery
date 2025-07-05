@@ -114,6 +114,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         minPrice: minPrice ? parseFloat(minPrice as string) : undefined,
         maxPrice: maxPrice ? parseFloat(maxPrice as string) : undefined,
         featured: featured === 'true' ? true : undefined,
+        available: featured === 'true' ? true : undefined, // Only show available artworks when featured=true
       };
       
       const artworks = await storage.getArtworks(filters);

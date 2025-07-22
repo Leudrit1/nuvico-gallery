@@ -193,9 +193,9 @@ export default function AddArtworkDialog({ open, onOpenChange }: AddArtworkDialo
               <Label htmlFor="imageUrl">Image URL *</Label>
               <Input
                 id="imageUrl"
-                type="url"
-                value={formData.imageUrl}
-                onChange={(e) => handleChange("imageUrl", e.target.value)}
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleChange("imageUrl", e.target.files?.[0])}
                 placeholder="https://example.com/image.jpg"
                 required
               />
@@ -285,7 +285,7 @@ export default function AddArtworkDialog({ open, onOpenChange }: AddArtworkDialo
               <Label>Preview</Label>
               <div className="relative w-full h-48 bg-gray-100 rounded-lg overflow-hidden">
                 <img
-                  src={formData.imageUrl}
+                  src={formData.imageUrl ? URL.createObjectURL(formData.imageUrl) : ""}
                   alt="Preview"
                   className="w-full h-full object-cover"
                   onError={() => {

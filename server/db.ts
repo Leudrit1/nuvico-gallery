@@ -1,15 +1,30 @@
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-serverless';
-import ws from "ws";
-import * as schema from "@shared/schema";
+// ✅ Lexo .env me rrugë të plotë për ESM
+import dotenv from "dotenv";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 
-neonConfig.webSocketConstructor = ws;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+dotenv.config({ path: join(__dirname, ".env") });
 
-if (!process.env.DATABASE_URL) {
-  throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?",
-  );
+// ✅ Importo mysql2/promise
+import mysql from "mysql2/promise";
+
+// ✅ Kontrollo nëse variablat e databazës ekzistojnë
+const requiredVars = ["DB_HOST", "DB_USER", "DB_PASS", "DB_NAME"];
+for (const variable of requiredVars) {
+  if (!process.env[variable]) {
+    throw new Error(`❌ ${variable} is not defined in .env file`);
+  }
 }
 
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-export const db = drizzle({ client: pool, schema });
+// ✅ Krijo pool për lidhje me MySQL
+export const pool = mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
+});

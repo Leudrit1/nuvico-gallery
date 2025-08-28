@@ -7,7 +7,9 @@
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "tsx watch server/index.ts",
     "dev:client": "vite",
-    "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
+    "build:server": "tsc -p server/tsconfig.json --noEmitOnError false",
+    "build:client": "cd client && npm install && npm run build",
+    "build": "npm run build:client && npm run build:server",
     "postbuild": "copyfiles -u 1 server/.env dist/",
     "start": "cross-env NODE_ENV=production node dist/index.js",
     "start:dev": "node dist/index.js",
@@ -48,7 +50,6 @@
     "@radix-ui/react-toggle-group": "^1.1.3",
     "@radix-ui/react-tooltip": "^1.2.0",
     "@tanstack/react-query": "^5.60.5",
-    "@types/memoizee": "^0.4.12",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
@@ -110,7 +111,8 @@
     "ts-node": "^10.9.2",
     "tsx": "^4.19.1",
     "typescript": "^5.6.3",
-    "vite": "^5.4.14"
+    "vite": "^5.4.14",
+    "concurrently": "^8.2.1"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.8"

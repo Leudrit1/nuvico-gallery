@@ -54,3 +54,12 @@ export type Artwork = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+// Composite type used by client when displaying optional artist info
+export type ArtworkWithArtist = Artwork & {
+  artist?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+  } | null;
+};

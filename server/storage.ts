@@ -3,6 +3,10 @@
 import { pool } from "./db"; // db.ts përmban mysql2/promise lidhjen
 import type { Artwork, InsertArtwork, UpdateArtwork } from "../shared/schema";
 
+// In-memory fallback store for development / DB outages
+const memoryArtworks: Artwork[] = [];
+let memoryNextId = 1000;
+
 // Interfejsi për artikujt
 export interface IStorage {
   getArtworks(): Promise<Artwork[]>;
@@ -15,13 +19,88 @@ export interface IStorage {
 // Implementimi që përdor databazën MySQL
 export class DatabaseStorage implements IStorage {
   async getArtworks(): Promise<Artwork[]> {
-    const [rows] = await pool.query("SELECT * FROM artworks ORDER BY createdAt DESC");
-    return rows as Artwork[];
+    try {
+      const [rows] = await pool.query(
+        `SELECT 
+          id,
+          title,
+          description,
+          price,
+          image_url AS imageUrl,
+          style,
+          medium,
+          width,
+          height,
+          year,
+          is_available AS isAvailable,
+          is_featured AS isFeatured,
+          created_at AS createdAt,
+          updated_at AS updatedAt
+        FROM artworks
+        ORDER BY created_at DESC`
+      );
+      return rows as Artwork[];
+    } catch (error) {
+      if (process.env.NODE_ENV !== "production") {
+        console.warn("DB unavailable, returning fallback artworks");
+        const now = new Date();
+        const fallback: Artwork[] = [
+          {
+            id: 1,
+            title: "Starry Night",
+            description: "Vincent van Gogh reproduction",
+            price: "299.00",
+            imageUrl: "/Starry-Night-canvas-Vincent-van-Gogh-New-1889.webp",
+            style: "Post-Impressionism",
+            medium: "Oil on canvas",
+            width: 92,
+            height: 73,
+            year: 1889,
+            isAvailable: true,
+            isFeatured: true,
+            createdAt: now,
+            updatedAt: now,
+          },
+        ];
+        // also include any in-memory items created during this run
+        return [...memoryArtworks, ...fallback];
+      }
+      throw error;
+    }
   }
 
   async getArtworkById(id: number): Promise<Artwork | undefined> {
-    const [rows] = await pool.query("SELECT * FROM artworks WHERE id = ?", [id]);
-    return (rows as Artwork[])[0];
+    try {
+      const [rows] = await pool.query(
+        `SELECT 
+          id,
+          title,
+          description,
+          price,
+          image_url AS imageUrl,
+          style,
+          medium,
+          width,
+          height,
+          year,
+          is_available AS isAvailable,
+          is_featured AS isFeatured,
+          created_at AS createdAt,
+          updated_at AS updatedAt
+        FROM artworks
+        WHERE id = ?`,
+        [id]
+      );
+      return (rows as Artwork[])[0];
+    } catch (error) {
+      if (process.env.NODE_ENV !== "production") {
+        const mem = memoryArtworks.find(a => a.id === id);
+        if (mem) return mem;
+        const all = await this.getArtworks();
+        return all.find(a => a.id === id);
+      }
+      throw error;
+    }
   }
 
   async createArtwork(data: InsertArtwork): Promise<Artwork> {
@@ -31,43 +110,141 @@ export class DatabaseStorage implements IStorage {
       throw new Error("Title, price, and imageUrl are required");
     }
 
-    const [result] = await pool.query(
-      `INSERT INTO artworks (title, description, price, imageUrl)
-       VALUES (?, ?, ?, ?)`,
-      [title, description || null, price, imageUrl]
-    );
+    try {
+      console.log('Creating artwork with data:', { title, description, price, imageUrl: (imageUrl || '').substring(0, 100) + '...' });
+      
+      const [result] = await pool.query(
+        `INSERT INTO artworks (title, description, price, image_url)
+         VALUES (?, ?, ?, ?)`,
+        [title, description || null, price, imageUrl]
+      );
 
-    const insertId = (result as any).insertId;
+      const insertId = (result as any).insertId;
+      console.log('Artwork created with ID:', insertId);
 
-    const [rows] = await pool.query("SELECT * FROM artworks WHERE id = ?", [insertId]);
-    return (rows as Artwork[])[0];
+      const [rows] = await pool.query(
+        `SELECT 
+          id,
+          title,
+          description,
+          price,
+          image_url AS imageUrl,
+          style,
+          medium,
+          width,
+          height,
+          year,
+          is_available AS isAvailable,
+          is_featured AS isFeatured,
+          created_at AS createdAt,
+          updated_at AS updatedAt
+        FROM artworks
+        WHERE id = ?`,
+        [insertId]
+      );
+      
+      const artwork = (rows as Artwork[])[0];
+      console.log('Retrieved artwork:', artwork);
+      return artwork;
+    } catch (error) {
+      console.error('Error in createArtwork:', error);
+      // Development fallback: store in memory when DB is unreachable
+      if (process.env.NODE_ENV !== 'production') {
+        const now = new Date();
+        const artwork: Artwork = {
+          id: memoryNextId++,
+          title: data.title,
+          description: data.description ?? null,
+          price: data.price,
+          imageUrl: data.imageUrl,
+          style: data.style ?? null,
+          medium: data.medium ?? null,
+          width: data.width ?? null,
+          height: data.height ?? null,
+          year: data.year ?? null,
+          isAvailable: data.isAvailable ?? true,
+          isFeatured: data.isFeatured ?? false,
+          createdAt: now,
+          updatedAt: now,
+        };
+        memoryArtworks.unshift(artwork);
+        console.warn('DB unavailable, saved artwork in memory:', artwork.id);
+        return artwork;
+      }
+      throw error;
+    }
   }
 
   async updateArtwork(id: number, data: UpdateArtwork): Promise<Artwork> {
-    const fields = [];
-    const values = [];
+    const columnMap: Record<string, string> = {
+      title: "title",
+      description: "description",
+      price: "price",
+      imageUrl: "image_url",
+      style: "style",
+      medium: "medium",
+      width: "width",
+      height: "height",
+      year: "year",
+      isAvailable: "is_available",
+      isFeatured: "is_featured",
+    };
+
+    const fields: string[] = [];
+    const values: any[] = [];
 
     for (const key in data) {
-      fields.push(`${key} = ?`);
+      const column = columnMap[key as keyof typeof columnMap];
+      if (!column) continue;
+      fields.push(`${column} = ?`);
       values.push((data as any)[key]);
     }
 
     values.push(id); // për WHERE
 
     if (fields.length === 0) {
+      // Dev fallback update in memory
+      if (process.env.NODE_ENV !== 'production') {
+        const idx = memoryArtworks.findIndex(a => a.id === id);
+        if (idx !== -1) {
+          const updated = { ...memoryArtworks[idx], ...data, updatedAt: new Date() } as Artwork;
+          memoryArtworks[idx] = updated;
+          return updated;
+        }
+      }
       throw new Error("No data to update");
     }
 
-    await pool.query(
-      `UPDATE artworks SET ${fields.join(", ")}, updatedAt = CURRENT_TIMESTAMP WHERE id = ?`,
-      values
-    );
-
-    return this.getArtworkById(id) as Promise<Artwork>;
+    try {
+      await pool.query(
+        `UPDATE artworks SET ${fields.join(", ")}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+        values
+      );
+      return this.getArtworkById(id) as Promise<Artwork>;
+    } catch (error) {
+      if (process.env.NODE_ENV !== 'production') {
+        const idx = memoryArtworks.findIndex(a => a.id === id);
+        if (idx !== -1) {
+          const updated = { ...memoryArtworks[idx], ...data, updatedAt: new Date() } as Artwork;
+          memoryArtworks[idx] = updated;
+          return updated;
+        }
+      }
+      throw error;
+    }
   }
 
   async deleteArtwork(id: number): Promise<void> {
-    await pool.query("DELETE FROM artworks WHERE id = ?", [id]);
+    try {
+      await pool.query("DELETE FROM artworks WHERE id = ?", [id]);
+    } catch (error) {
+      if (process.env.NODE_ENV !== 'production') {
+        const idx = memoryArtworks.findIndex(a => a.id === id);
+        if (idx !== -1) memoryArtworks.splice(idx, 1);
+        return;
+      }
+      throw error;
+    }
   }
 
   // ================= USER METHODS =================
@@ -100,27 +277,11 @@ export class DatabaseStorage implements IStorage {
   }
 
   // ================= ARTIST METHODS =================
-  async getArtists(): Promise<any[]> {
-    // TODO: Zëvendëso me query të saktë sipas strukturës së tabelës artists
-    const [rows] = await pool.query("SELECT * FROM artists");
-    return rows as any[];
-  }
-
-  async getArtistWithArtworks(id: string): Promise<any> {
-    // TODO: Zëvendëso me query të saktë sipas strukturës së tabelës artists dhe artworks
-    const [artists] = await pool.query("SELECT * FROM artists WHERE id = ?", [id]);
-    if ((artists as any[]).length === 0) return undefined;
-    const artist = (artists as any[])[0];
-    const [artworks] = await pool.query("SELECT * FROM artworks WHERE artist_id = ?", [id]);
-    artist.artworks = artworks;
-    return artist;
-  }
-
-  async getArtworksByArtist(artistId: string): Promise<any[]> {
-    // TODO: Zëvendëso me query të saktë sipas strukturës së tabelës artworks
-    const [rows] = await pool.query("SELECT * FROM artworks WHERE artist_id = ?", [artistId]);
-    return rows as any[];
-  }
+  // Fshi:
+  // - async getArtists()
+  // - async getArtistWithArtworks()
+  // - async getArtworksByArtist()
+  // - çdo koment ose query për artistët
 }
 
 // Eksporto instancën që do përdoret nëpër routes

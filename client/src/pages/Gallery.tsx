@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Search, Filter } from "lucide-react";
-import type { ArtworkWithArtist } from "@shared/schema";
 
 export default function Gallery() {
   const [filters, setFilters] = useState({
@@ -19,7 +18,7 @@ export default function Gallery() {
     sortBy: "newest"
   });
 
-  const { data: artworks = [], isLoading } = useQuery<ArtworkWithArtist[]>({
+  const { data: artworks = [], isLoading } = useQuery<any[]>({
     queryKey: ["/api/artworks", filters]
   });
 
@@ -150,10 +149,10 @@ export default function Gallery() {
           {/* Artworks Display */}
           {isLoading ? (
             <div className="flex justify-center">
-              <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-8 space-y-8 max-w-7xl">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl w-full">
                 {[...Array(12)].map((_, i) => (
-                  <div key={i} className="break-inside-avoid animate-pulse mb-8">
-                    <div className={`bg-gray-300 rounded-xl mb-4 ${i % 3 === 0 ? 'h-80' : i % 3 === 1 ? 'h-64' : 'h-72'}`}></div>
+                  <div key={i} className="animate-pulse">
+                    <div className="bg-gray-300 rounded-xl mb-4 h-64"></div>
                     <div className="h-4 bg-gray-300 rounded mb-2"></div>
                     <div className="h-4 bg-gray-300 rounded w-2/3 mb-2"></div>
                     <div className="h-4 bg-gray-300 rounded w-1/3"></div>
@@ -163,51 +162,23 @@ export default function Gallery() {
             </div>
           ) : artworks.length > 0 ? (
             <div className="flex justify-center">
-              <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-8 max-w-7xl">
-                {artworks.map((artwork, index) => (
-                  <div key={artwork.id} className="break-inside-avoid mb-8">
-                    <div className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 bg-white">
-                      <div className="aspect-[4/5] overflow-hidden">
-                        <img 
-                          src={artwork.imageUrl} 
-                          alt={artwork.title}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                        />
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300"></div>
-                      </div>
-                      
-                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-6 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                        <h3 className="font-bold text-white text-lg mb-1">{artwork.title}</h3>
-                        <p className="text-white/90 text-sm mb-2">by {artwork.artist.firstName} {artwork.artist.lastName}</p>
-                        <div className="flex justify-between items-center">
-                          <span className="text-white font-semibold text-lg">${parseFloat(artwork.price).toLocaleString()}</span>
-                          <div className="flex flex-col items-end">
-                            {artwork.style && (
-                              <span className="text-white/70 text-xs mb-1">{artwork.style}</span>
-                            )}
-                            {artwork.width && artwork.height && (
-                              <span className="text-white/60 text-xs">{artwork.width}" × {artwork.height}"</span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl w-full">
+                {artworks.map((artwork) => (
+                  <ArtworkCard key={artwork.id} artwork={artwork} />
                 ))}
               </div>
             </div>
           ) : (
-            <div className="text-center py-20">
-              <div className="mb-6">
-                <Filter className="h-20 w-20 text-gray-300 mx-auto" />
+            <div className="text-center py-16">
+              <div className="max-w-md mx-auto">
+                <div className="w-24 h-24 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
+                  <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-semibold text-gray-600 mb-2">No Artworks Found</h3>
+                <p className="text-gray-500">We couldn't find any artworks matching your criteria. Try adjusting your filters.</p>
               </div>
-              <h3 className="text-2xl font-semibold text-gray-600 mb-3">No artworks found</h3>
-              <p className="text-gray-500 mb-8 max-w-md mx-auto">
-                We couldn't find any artworks matching your current filters. Try adjusting your search criteria.
-              </p>
-              <Button onClick={clearFilters} variant="outline" className="border-warm-brown text-warm-brown hover:bg-warm-brown hover:text-white">
-                Clear All Filters
-              </Button>
             </div>
           )}
         </div>

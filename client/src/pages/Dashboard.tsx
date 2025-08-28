@@ -10,8 +10,18 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import { isUnauthorizedError } from "@/lib/authUtils";
-import { Plus, Edit, Trash2, Palette, User } from "lucide-react";
-import type { Artwork, User as UserType } from "@shared/schema";
+import { Plus, Edit, Trash2, Palette } from "lucide-react";
+import type { Artwork } from "@shared/schema";
+
+// Define User type locally
+type User = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  isArtist?: boolean;
+  profileImageUrl?: string | null;
+};
 
 export default function Dashboard() {
   const { user, isLoading: authLoading } = useAuth();
@@ -19,9 +29,12 @@ export default function Dashboard() {
   const queryClient = useQueryClient();
   const [addDialogOpen, setAddDialogOpen] = useState(false);
 
+  // Type assertion for user
+  const typedUser = user as User | null;
+
   const { data: myArtworks = [], isLoading: artworksLoading } = useQuery<Artwork[]>({
     queryKey: ["/api/my-artworks"],
-    enabled: !!user
+    enabled: !!typedUser
   });
 
   const deleteArtworkMutation = useMutation({
@@ -56,7 +69,7 @@ export default function Dashboard() {
   });
 
   const updateProfileMutation = useMutation({
-    mutationFn: async (data: Partial<UserType>) => {
+    mutationFn: async (data: Partial<User>) => {
       await apiRequest("/api/auth/user", "PATCH", data);
     },
     onSuccess: () => {
@@ -116,7 +129,7 @@ export default function Dashboard() {
 
   // Redirect to login if not authenticated
   useEffect(() => {
-    if (!authLoading && !user) {
+    if (!authLoading && !typedUser) {
       toast({
         title: "Unauthorized",
         description: "You are logged out. Logging in again...",
@@ -127,7 +140,7 @@ export default function Dashboard() {
       }, 500);
       return;
     }
-  }, [user, authLoading, toast]);
+  }, [typedUser, authLoading, toast]);
 
   const handleDeleteArtwork = (id: number) => {
     if (confirm("Are you sure you want to delete this artwork?")) {
@@ -159,26 +172,22 @@ export default function Dashboard() {
           <div className="flex justify-between items-center mb-8">
             <div>
               <h1 className="text-4xl font-bold text-charcoal mb-2">
-                Welcome back, {user?.firstName}!
+                Welcome back, {typedUser?.firstName}!
               </h1>
               <p className="text-lg text-gray-600">
-                Manage your artworks and profile here
+                {myArtworks.length > 0 
+                  ? `You have ${myArtworks.length} artwork${myArtworks.length === 1 ? '' : 's'} in your gallery`
+                  : "Manage your artworks and profile here"
+                }
               </p>
             </div>
-            {user?.isArtist ? (
-              <Button onClick={() => setAddDialogOpen(true)} className="warm-brown text-white hover:golden-brown">
-                <Plus className="h-4 w-4 mr-2" />
-                Add Artwork
-              </Button>
-            ) : (
-              <Button onClick={handleBecomeArtist} className="warm-brown text-white hover:golden-brown">
-                <User className="h-4 w-4 mr-2" />
-                Become an Artist
-              </Button>
-            )}
+            <Button onClick={() => setAddDialogOpen(true)} className="warm-brown text-white hover:golden-brown">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Artwork
+            </Button>
           </div>
 
-          {user?.isArtist && (
+          {typedUser?.isArtist && (
             <>
               {/* Artworks Section */}
               <Card>
@@ -260,20 +269,76 @@ export default function Dashboard() {
             </>
           )}
 
-          {!user?.isArtist && (
+          {!typedUser?.isArtist && myArtworks.length === 0 && (
             <Card className="text-center py-16">
               <CardContent>
-                <User className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-2xl font-semibold text-gray-600 mb-4">Become an Artist</h3>
+                <Palette className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-2xl font-semibold text-gray-600 mb-4">Start Creating</h3>
                 <p className="text-gray-500 mb-8 max-w-md mx-auto">
-                  Join our community of talented artists and start showcasing your work to collectors worldwide.
+                  Begin your artistic journey by adding your first artwork to showcase your talent to collectors worldwide.
                 </p>
-                <Button onClick={handleBecomeArtist} className="warm-brown text-white hover:golden-brown" size="lg">
-                  <User className="h-4 w-4 mr-2" />
-                  Become an Artist
+                <Button onClick={() => setAddDialogOpen(true)} className="warm-brown text-white hover:golden-brown" size="lg">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Your First Artwork
                 </Button>
               </CardContent>
             </Card>
+          )}
+
+          {!typedUser?.isArtist && myArtworks.length > 0 && (
+            <>
+              {/* Artworks Section for non-artist users */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex justify-between items-center">
+                    <span>My Artworks</span>
+                    <Button onClick={() => setAddDialogOpen(true)} size="sm" className="warm-brown text-white hover:golden-brown">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add New
+                    </Button>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {myArtworks.map((artwork) => (
+                      <div key={artwork.id} className="flex items-center justify-between p-4 bg-soft-gray rounded-lg hover:bg-medium-gray/50 transition-colors">
+                        <div className="flex items-center space-x-4">
+                          <img
+                            src={artwork.imageUrl}
+                            alt={artwork.title}
+                            className="w-16 h-16 rounded-lg object-cover"
+                          />
+                          <div>
+                            <h3 className="font-semibold text-lg">{artwork.title}</h3>
+                            <p className="text-sm text-gray-600">
+                              {artwork.style} • ${parseFloat(artwork.price).toLocaleString()}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          {artwork.isAvailable ? (
+                            <Badge className="bg-green-100 text-green-800">Available</Badge>
+                          ) : (
+                            <Badge className="bg-blue-100 text-blue-800">Sold</Badge>
+                          )}
+                          <Button size="sm" variant="outline">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            onClick={() => handleDeleteArtwork(artwork.id)}
+                            disabled={deleteArtworkMutation.isPending}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </>
           )}
         </div>
       </div>

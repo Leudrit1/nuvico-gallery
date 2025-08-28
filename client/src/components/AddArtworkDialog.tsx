@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -25,7 +25,7 @@ export default function AddArtworkDialog({ open, onOpenChange }: AddArtworkDialo
     title: "",
     description: "",
     price: "",
-    imageUrl: "",
+    imageUrl: undefined as File | undefined,
     style: "",
     medium: "",
     width: "",
@@ -37,15 +37,66 @@ export default function AddArtworkDialog({ open, onOpenChange }: AddArtworkDialo
 
   const createArtworkMutation = useMutation({
     mutationFn: async (data: any) => {
+      // Handle image upload - compress and resize if needed
+      let imageUrl = data.imageUrl;
+      if (data.imageUrl instanceof File) {
+        try {
+          // Create a compressed version of the image
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          const img = new Image();
+          
+          imageUrl = await new Promise((resolve, reject) => {
+            img.onload = () => {
+              // Calculate new dimensions (max 800x800)
+              const maxSize = 800;
+              let { width, height } = img;
+              
+              if (width > height) {
+                if (width > maxSize) {
+                  height = (height * maxSize) / width;
+                  width = maxSize;
+                }
+              } else {
+                if (height > maxSize) {
+                  width = (width * maxSize) / height;
+                  height = maxSize;
+                }
+              }
+              
+              canvas.width = width;
+              canvas.height = height;
+              
+              // Draw and compress
+              ctx?.drawImage(img, 0, 0, width, height);
+              const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+              resolve(compressedDataUrl);
+            };
+            
+            img.onerror = () => reject(new Error('Failed to load image'));
+            img.src = URL.createObjectURL(data.imageUrl);
+          });
+        } catch (error) {
+          console.error('Image processing error:', error);
+          toast({
+            title: "Image Processing Error",
+            description: "Failed to process the image. Please try again.",
+            variant: "destructive",
+          });
+          throw error;
+        }
+      }
+      
       const validatedData = insertArtworkSchema.parse({
         ...data,
-        price: parseFloat(data.price),
-        width: data.width ? parseInt(data.width) : undefined,
-        height: data.height ? parseInt(data.height) : undefined,
-        year: data.year ? parseInt(data.year) : undefined
+        imageUrl: imageUrl,
+        price: data.price.toString(), // Ensure price is string as per schema
+        width: data.width ? parseInt(data.width) : null,
+        height: data.height ? parseInt(data.height) : null,
+        year: data.year ? parseInt(data.year) : null
       });
       
-      await apiRequest("POST", "/api/artworks", validatedData);
+      await apiRequest("/api/artworks", "POST", validatedData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/my-artworks"] });
@@ -82,7 +133,7 @@ export default function AddArtworkDialog({ open, onOpenChange }: AddArtworkDialo
       title: "",
       description: "",
       price: "",
-      imageUrl: "",
+      imageUrl: undefined as File | undefined,
       style: "",
       medium: "",
       width: "",
@@ -93,7 +144,30 @@ export default function AddArtworkDialog({ open, onOpenChange }: AddArtworkDialo
     });
   };
 
-  const handleChange = (field: string, value: string | boolean) => {
+  const handleChange = (field: string, value: string | boolean | File | undefined) => {
+    if (field === "imageUrl" && value instanceof File) {
+      // Check file size (limit to 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (value.size > maxSize) {
+        toast({
+          title: "File Too Large",
+          description: "Image size must be less than 5MB. Please choose a smaller image.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      // Check file type
+      if (!value.type.startsWith('image/')) {
+        toast({
+          title: "Invalid File Type",
+          description: "Please select an image file (JPEG, PNG, etc.).",
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+    
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -146,6 +220,9 @@ export default function AddArtworkDialog({ open, onOpenChange }: AddArtworkDialo
             <Upload className="h-5 w-5 text-warm-brown" />
             Add New Artwork
           </DialogTitle>
+          <DialogDescription>
+            Fill in the details below to add a new artwork to your gallery.
+          </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -190,7 +267,7 @@ export default function AddArtworkDialog({ open, onOpenChange }: AddArtworkDialo
             </div>
 
             <div>
-              <Label htmlFor="imageUrl">Image URL *</Label>
+              <Label htmlFor="imageUrl">Image *</Label>
               <Input
                 id="imageUrl"
                 type="file"
@@ -200,7 +277,7 @@ export default function AddArtworkDialog({ open, onOpenChange }: AddArtworkDialo
                 required
               />
               <p className="text-sm text-gray-500 mt-1">
-                Upload your image to a service like Unsplash, Imgur, or your own hosting
+                Upload an image file (JPEG, PNG, etc.) under 5MB. Images will be automatically compressed and resized.
               </p>
             </div>
           </div>

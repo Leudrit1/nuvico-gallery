@@ -7,7 +7,6 @@ export const artworks = {
   description: "description",
   price: "price",
   imageUrl: "image_url",
-  artistId: "artist_id",
   style: "style",
   medium: "medium",
   width: "width",
@@ -45,7 +44,6 @@ export type Artwork = {
   description: string | null;
   price: string;
   imageUrl: string;
-  artistId: string;
   style: string | null;
   medium: string | null;
   width: number | null;

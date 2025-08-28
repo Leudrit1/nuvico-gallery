@@ -7,8 +7,6 @@ import { useAuth } from "@/hooks/useAuth";
 import Home from "@/pages/Home";
 import Gallery from "@/pages/Gallery";
 import ArtworkDetail from "@/pages/ArtworkDetail";
-import Artists from "@/pages/Artists";
-import ArtistProfile from "@/pages/ArtistProfile";
 import Dashboard from "@/pages/Dashboard";
 import Landing from "@/pages/Landing";
 import Login from "@/pages/Login";
@@ -27,8 +25,6 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/gallery" component={Gallery} />
       <Route path="/artworks/:id" component={ArtworkDetail} />
-      <Route path="/artists" component={Artists} />
-      <Route path="/artists/:id" component={ArtistProfile} />
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
       

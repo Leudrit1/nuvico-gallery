@@ -2,10 +2,17 @@
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+import fs from "fs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-dotenv.config({ path: join(__dirname, ".env") });
+
+// Prefer .env.local for local development, fall back to .env
+const envLocalPath = join(__dirname, ".env.local");
+const envPath = fs.existsSync(envLocalPath)
+  ? envLocalPath
+  : join(__dirname, ".env");
+dotenv.config({ path: envPath });
 
 // ✅ Importo mysql2/promise
 import mysql from "mysql2/promise";

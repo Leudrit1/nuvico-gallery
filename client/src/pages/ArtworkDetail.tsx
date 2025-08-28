@@ -84,24 +84,12 @@ export default function ArtworkDetail() {
                 alt={artwork.title}
                 className="w-full h-auto rounded-xl shadow-lg"
               />
-              <Button
-                size="icon"
-                variant="outline"
-                className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm hover:bg-white"
-              >
-                <Heart className="h-4 w-4" />
-              </Button>
             </div>
 
             {/* Artwork Details */}
             <div className="space-y-6">
               <div>
                 <h1 className="text-4xl font-bold text-charcoal mb-2">{artwork.title}</h1>
-                <Link href={`/artists/${artwork.artistId}`}>
-                  <p className="text-xl text-warm-brown hover:text-golden-brown cursor-pointer">
-                    by {artwork.artist.firstName} {artwork.artist.lastName}
-                  </p>
-                </Link>
               </div>
 
               <div className="flex items-center gap-4">
@@ -117,32 +105,30 @@ export default function ArtworkDetail() {
 
               <Separator />
 
-              {/* Artwork Info */}
+              {/* Artwork Info - organized */}
               <div className="grid grid-cols-2 gap-4">
                 {artwork.style && (
                   <div className="flex items-center gap-2">
                     <Palette className="h-4 w-4 text-gray-400" />
-                    <span className="text-sm text-gray-600">Style: {artwork.style}</span>
+                    <span className="text-sm text-gray-600"><span className="font-medium">Style:</span> {artwork.style}</span>
                   </div>
                 )}
                 {artwork.medium && (
                   <div className="flex items-center gap-2">
                     <Palette className="h-4 w-4 text-gray-400" />
-                    <span className="text-sm text-gray-600">Medium: {artwork.medium}</span>
+                    <span className="text-sm text-gray-600"><span className="font-medium">Medium:</span> {artwork.medium}</span>
                   </div>
                 )}
                 {artwork.width && artwork.height && (
                   <div className="flex items-center gap-2">
                     <Ruler className="h-4 w-4 text-gray-400" />
-                    <span className="text-sm text-gray-600">
-                      {artwork.width} × {artwork.height} cm
-                    </span>
+                    <span className="text-sm text-gray-600"><span className="font-medium">Dimensions:</span> {artwork.width} × {artwork.height} cm</span>
                   </div>
                 )}
                 {artwork.year && (
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-gray-400" />
-                    <span className="text-sm text-gray-600">Year: {artwork.year}</span>
+                    <span className="text-sm text-gray-600"><span className="font-medium">Year:</span> {artwork.year}</span>
                   </div>
                 )}
               </div>
@@ -160,43 +146,17 @@ export default function ArtworkDetail() {
               {/* Action Buttons */}
               <div className="flex gap-4">
                 {artwork.isAvailable && (
-                  <Button className="flex-1 warm-brown text-white hover:golden-brown">
-                    Contact Artist
-                  </Button>
+                  <Link href="/contact">
+                    <Button className="flex-1 warm-brown text-white hover:golden-brown">
+                      Contact
+                    </Button>
+                  </Link>
                 )}
-                <Button variant="outline" className="border-warm-brown text-warm-brown hover:bg-warm-brown hover:text-white">
-                  <Heart className="h-4 w-4 mr-2" />
-                  Save
-                </Button>
               </div>
             </div>
           </div>
 
-          {/* Artist Info Card */}
-          <Card className="mt-16">
-            <CardContent className="p-8">
-              <div className="flex items-center gap-6">
-                <img
-                  src={artwork.artist.profileImageUrl || `https://ui-avatars.com/api/?name=${artwork.artist.firstName}+${artwork.artist.lastName}&size=80`}
-                  alt={`${artwork.artist.firstName} ${artwork.artist.lastName}`}
-                  className="w-20 h-20 rounded-full object-cover"
-                />
-                <div className="flex-1">
-                  <h3 className="text-xl font-semibold mb-2">
-                    {artwork.artist.firstName} {artwork.artist.lastName}
-                  </h3>
-                  {artwork.artist.bio && (
-                    <p className="text-gray-600 mb-4">{artwork.artist.bio}</p>
-                  )}
-                  <Link href={`/artists/${artwork.artistId}`}>
-                    <Button variant="outline" className="border-warm-brown text-warm-brown hover:bg-warm-brown hover:text-white">
-                      View Artist Profile
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          {/* Removed artist info card */}
         </div>
       </div>
 
@@ -204,3 +164,4 @@ export default function ArtworkDetail() {
     </div>
   );
 }
+

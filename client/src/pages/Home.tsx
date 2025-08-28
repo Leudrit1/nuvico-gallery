@@ -2,23 +2,22 @@ import { useQuery } from "@tanstack/react-query";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import ArtworkCard from "@/components/ArtworkCard";
-import ArtistCard from "@/components/ArtistCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Link } from "wouter";
 import { Palette, Users, Globe, Award, MapPin, Phone, Mail, Clock, Shield, Heart } from "lucide-react";
-import type { ArtworkWithArtist, User } from "@shared/schema";
+import fotoIme from './Starry-Night-canvas-Vincent-van-Gogh-New-1889.webp';
 
 export default function Home() {
-  const { data: featuredArtworks = [], isLoading: artworksLoading } = useQuery<ArtworkWithArtist[]>({
+  const { data: featuredArtworks = [], isLoading: artworksLoading } = useQuery<any[]>({
     queryKey: ["/api/artworks", { featured: true }]
   });
 
-  const { data: artists = [], isLoading: artistsLoading } = useQuery<User[]>({
-    queryKey: ["/api/artists"]
-  });
+  // const { data: artists = [], isLoading: artistsLoading } = useQuery<any[]>({
+  //   queryKey: ["/api/artists"]
+  // });
 
   return (
     <div className="min-h-screen bg-background">
@@ -51,8 +50,7 @@ export default function Home() {
               </div>
             </div>
             <div className="relative animate-fade-in">
-              <img 
-                src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600" 
+              <img src={ fotoIme } 
                 alt="Modern art gallery interior" 
                 className="rounded-2xl shadow-2xl w-full h-auto animate-float"
               />
@@ -220,9 +218,8 @@ export default function Home() {
                 </div>
                 <h3 className="font-semibold text-lg mb-2">Address</h3>
                 <p className="text-gray-600 text-sm">
-                  123 Art District<br />
-                  Gallery Quarter<br />
-                  City Center, 12345
+                  119 Alpenstrasse<br />
+                  3627 Heimberg, Switzerland
                 </p>
               </CardContent>
             </Card>
@@ -234,9 +231,8 @@ export default function Home() {
                 </div>
                 <h3 className="font-semibold text-lg mb-2">Phone</h3>
                 <p className="text-gray-600 text-sm">
-                  +1 (555) 123-4567<br />
-                  Mon-Fri: 9AM-6PM<br />
-                  Sat-Sun: 10AM-5PM
+                  +41 76 451 93 98<br />
+                  +41 79 782 50 77
                 </p>
               </CardContent>
             </Card>
@@ -248,9 +244,7 @@ export default function Home() {
                 </div>
                 <h3 className="font-semibold text-lg mb-2">Email</h3>
                 <p className="text-gray-600 text-sm">
-                  info@nuvico.art<br />
-                  gallery@nuvico.art<br />
-                  curator@nuvico.art
+                  info@nuvico.ch
                 </p>
               </CardContent>
             </Card>

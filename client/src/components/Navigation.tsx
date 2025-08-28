@@ -123,7 +123,7 @@ export default function Navigation() {
                       <div className="flex flex-col space-y-1 leading-none">
                         <p className="font-medium">Admin</p>
                         <p className="w-[200px] truncate text-sm text-muted-foreground">
-                          {(user as any)?.email || 'admin@nuvico.art'}
+                          {(user as any)?.email || 'info@nuvico.ch'}
                         </p>
                       </div>
                     </div>

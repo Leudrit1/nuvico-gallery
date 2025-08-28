@@ -1,10 +1,56 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import session from "express-session";
+import MemoryStore from "memorystore";
 
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+
+// Add CORS middleware
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  // Allow both the server port and Vite dev server port
+  if (origin === 'http://localhost:5000' || origin === 'http://localhost:5173') {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
+
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: false, limit: '50mb' }));
+
+// Add session middleware before routes
+app.use(session({
+  store: new (MemoryStore(session))({
+    checkPeriod: 86400000 // prune expired entries every 24h
+  }),
+  secret: process.env.SESSION_SECRET || 'temp-secret-key',
+  resave: true,
+  saveUninitialized: true,
+  name: 'sessionId',
+  cookie: { 
+    secure: false,
+    httpOnly: false, // Allow JavaScript access for debugging
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    sameSite: 'lax' // Use lax for better compatibility
+  }
+}));
+
+// Add session debugging middleware
+app.use((req, res, next) => {
+  console.log('Session middleware - Session ID:', req.sessionID);
+  console.log('Session middleware - Session data:', req.session);
+  console.log('Cookies received:', req.headers.cookie);
+  next();
+});
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -50,9 +96,16 @@ app.use((req, res, next) => {
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
+  if (app.get("env") === "development" && process.env.NODE_ENV !== "production") {
+    try {
+      await setupVite(app, server);
+      console.log("Vite development server configured");
+    } catch (error) {
+      console.warn("Vite setup failed, falling back to static files:", error);
+      serveStatic(app);
+    }
   } else {
+    console.log("Serving static files from dist/public");
     serveStatic(app);
   }
 
@@ -60,6 +113,6 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   
 })();

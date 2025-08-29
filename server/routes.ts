@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage.ts";
 import { setupAuth, isAuthenticated } from "./replitAuth.ts";
-import { insertArtworkSchema, updateArtworkSchema } from "@shared/schema";
+import { insertArtworkSchema, updateArtworkSchema } from "@shared/schema.ts";
 import { z } from "zod";
 
 // Extend session interface to include userId

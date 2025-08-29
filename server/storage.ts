@@ -1,6 +1,6 @@
 // storage.ts
 
-import { pool } from "./db"; // db.ts përmban mysql2/promise lidhjen
+import { pool } from "./db.ts"; // db.ts përmban mysql2/promise lidhjen
 import type { Artwork, InsertArtwork, UpdateArtwork } from "../shared/schema";
 
 // In-memory fallback store for development / DB outages

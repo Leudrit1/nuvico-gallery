@@ -112,7 +112,7 @@ app.use((req, res, next) => {
   // ALWAYS serve the app on port 5000
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
-  const PORT = process.env.PORT || 5000;
+  const PORT = process.env.PORT || 4000;
   server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   
 })();

@@ -52,8 +52,8 @@ export default function Contact() {
                   Experience art in person at our beautiful gallery space
                 </p>
                 <div className="text-sm text-warm-brown font-medium">
-                  <p>123 Art District</p>
-                  <p>Tirana, Albania</p>
+                  <p>119 Alpenstrasse</p>
+                  <p>3627 Heimberg, Switzerland</p>
                 </div>
               </CardContent>
             </Card>
@@ -69,7 +69,7 @@ export default function Contact() {
                 </p>
                 <div className="text-sm text-warm-brown font-medium">
                   <p>Mon-Fri: 10:00 AM - 7:00 PM</p>
-                  <p>Sat-Sun: 11:00 AM - 6:00 PM</p>
+                  
                 </div>
               </CardContent>
             </Card>
@@ -84,8 +84,9 @@ export default function Contact() {
                   Multiple ways to reach our team for support
                 </p>
                 <div className="text-sm text-warm-brown font-medium">
-                  <p>+355 69 123 4567</p>
-                  <p>info@nuvico-gallery.com</p>
+                  <p>+41 76 451 93 98</p>
+                  <p>+41 79 782 50 77</p>
+                  <p>info@nuvico.ch</p>
                 </div>
               </CardContent>
             </Card>

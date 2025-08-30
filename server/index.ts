@@ -60,6 +60,8 @@ app.use((req, res, next) => {
   console.log('Cookies received:', req.headers.cookie);
   console.log('Session store type:', req.session?.constructor?.name);
   console.log('User ID in session:', req.session?.userId);
+  console.log('Request URL:', req.url);
+  console.log('Request method:', req.method);
   console.log('========================');
   next();
 });

@@ -44,6 +44,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Login endpoint
   app.post('/api/auth/login', async (req, res) => {
     try {
+      console.log('=== LOGIN ENDPOINT CALLED ===');
+      console.log('Request body:', req.body);
+      console.log('Request headers:', req.headers);
+      console.log('Session before login:', req.session);
+      console.log('Session ID before login:', req.sessionID);
+      
       const { username, password } = req.body;
       console.log('Login attempt for username:', username);
       
@@ -89,8 +95,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       req.session.userId = user.id;
       console.log('Setting session userId:', req.session.userId);
-      console.log('Session before save:', req.session);
-      console.log('Session ID before save:', req.sessionID);
+      console.log('Session after setting userId:', req.session);
+      console.log('Session ID after setting userId:', req.sessionID);
       
       req.session.save((err) => {
         if (err) {
@@ -100,13 +106,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log('Session saved successfully!');
         console.log('Session after save:', req.session);
         console.log('Session ID after save:', req.sessionID);
+        console.log('Session cookie path:', req.session.cookie?.path);
+        console.log('Session cookie domain:', req.session.cookie?.domain);
         
         // Set cookie manually for debugging
         res.setHeader('Set-Cookie', `sessionId=${req.sessionID}; Path=/; HttpOnly=false; SameSite=Lax; Max-Age=86400`);
         console.log('Set-Cookie header set:', res.getHeader('Set-Cookie'));
+        console.log('All response headers:', res.getHeaders());
         
         // Return user data without password
         const { password: _, ...userData } = user;
+        console.log('Sending response with user data:', userData);
         res.json(userData);
       });
     } catch (error) {

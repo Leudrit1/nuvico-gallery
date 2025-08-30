@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { insertArtworkSchema, updateArtworkSchema } from "@shared/schema";
 import { z } from "zod";
+import { pool } from "./db"; // Added import for pool
 
 // Extend session interface to include userId
 declare module 'express-session' {
@@ -33,44 +34,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { username, password } = req.body;
       
-      // Simple credential validation
-      if (username === 'admin' && password === 'password') {
-        let adminUser: any | undefined;
-        try {
-          adminUser = await storage.getUser('nuvico-gallery-admin');
-        } catch {
-          adminUser = undefined;
-        }
-
-        // In development, allow a mock admin user if DB is unavailable
-        if (!adminUser && process.env.NODE_ENV !== 'production') {
-          adminUser = {
-            id: 'nuvico-gallery-admin',
-            email: 'admin@example.com',
-            firstName: 'Admin',
-            lastName: 'User',
-            profileImageUrl: null,
-          };
-        }
-
-        if (!adminUser) {
-          return res.status(404).json({ message: "User not found" });
-        }
-
-        // Set session properly
-        req.session.userId = 'nuvico-gallery-admin';
-        console.log('Setting session userId:', req.session.userId);
-        req.session.save((err) => {
-          if (err) {
-            console.error("Error saving session:", err);
-            return res.status(500).json({ message: "Login failed" });
-          }
-          console.log('Session saved successfully:', req.session);
-          res.json(adminUser);
-        });
-      } else {
-        res.status(401).json({ message: "Invalid username or password" });
+      // Get user from database by username
+      let user: any;
+      try {
+        const [rows] = await pool.query("SELECT * FROM users WHERE username = ? OR email = ?", [username, username]);
+        user = (rows as any[])[0];
+      } catch (error) {
+        console.error("Database error:", error);
+        return res.status(500).json({ message: "Database error" });
       }
+
+      if (!user) {
+        return res.status(401).json({ message: "Invalid username or password" });
+      }
+
+      // Check password (assuming it's stored as plain text for now)
+      // TODO: Implement proper password hashing
+      if (user.password !== password) {
+        return res.status(401).json({ message: "Invalid username or password" });
+      }
+
+      // Set session properly
+      req.session.userId = user.id;
+      console.log('Setting session userId:', req.session.userId);
+      req.session.save((err) => {
+        if (err) {
+          console.error("Error saving session:", err);
+          return res.status(500).json({ message: "Login failed" });
+        }
+        console.log('Session saved successfully:', req.session);
+        
+        // Return user data without password
+        const { password: _, ...userData } = user;
+        res.json(userData);
+      });
     } catch (error) {
       console.error("Error in login:", error);
       res.status(500).json({ message: "Login failed" });

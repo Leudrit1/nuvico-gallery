@@ -10,7 +10,7 @@ const app = express();
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   // Allow both the server port and Vite dev server port
-  if (origin === 'http://localhost:5000' || origin === 'http://localhost:5173') {
+  if (origin === 'http://localhost:4000' || origin === 'http://localhost:5173') {
     res.header('Access-Control-Allow-Origin', origin);
   }
   res.header('Access-Control-Allow-Credentials', 'true');

@@ -36,12 +36,12 @@ app.use(session({
     checkPeriod: 86400000 // prune expired entries every 24h
   }),
   secret: process.env.SESSION_SECRET || 'temp-secret-key',
-  resave: true,
-  saveUninitialized: true,
+  resave: false, // Changed to false for better performance
+  saveUninitialized: false, // Changed to false for better security
   name: 'sessionId',
   cookie: { 
     secure: false,
-    httpOnly: false, // Allow JavaScript access for debugging
+    httpOnly: true, // Changed to true for security
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
     sameSite: 'lax' // Use lax for better compatibility
   }
@@ -49,9 +49,13 @@ app.use(session({
 
 // Add session debugging middleware
 app.use((req, res, next) => {
+  console.log('=== Session Middleware ===');
   console.log('Session middleware - Session ID:', req.sessionID);
   console.log('Session middleware - Session data:', req.session);
   console.log('Cookies received:', req.headers.cookie);
+  console.log('Session store type:', req.session?.constructor?.name);
+  console.log('User ID in session:', req.session?.userId);
+  console.log('========================');
   next();
 });
 

@@ -33,36 +33,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/auth/login', async (req, res) => {
     try {
       const { username, password } = req.body;
+      console.log('Login attempt for username:', username);
       
       // Get user from database by username
       let user: any;
       try {
         const [rows] = await pool.query("SELECT * FROM users WHERE username = ? OR email = ?", [username, username]);
         user = (rows as any[])[0];
+        console.log('User found in database:', user ? { id: user.id, username: user.username } : 'No user found');
       } catch (error) {
         console.error("Database error:", error);
         return res.status(500).json({ message: "Database error" });
       }
 
       if (!user) {
+        console.log('No user found for username:', username);
         return res.status(401).json({ message: "Invalid username or password" });
       }
 
       // Check password (assuming it's stored as plain text for now)
       // TODO: Implement proper password hashing
       if (user.password !== password) {
+        console.log('Password mismatch for user:', username);
         return res.status(401).json({ message: "Invalid username or password" });
       }
+
+      console.log('Password verified for user:', username);
 
       // Set session properly
       req.session.userId = user.id;
       console.log('Setting session userId:', req.session.userId);
+      console.log('Session before save:', req.session);
+      console.log('Session ID before save:', req.sessionID);
+      
       req.session.save((err) => {
         if (err) {
           console.error("Error saving session:", err);
           return res.status(500).json({ message: "Login failed" });
         }
-        console.log('Session saved successfully:', req.session);
+        console.log('Session saved successfully!');
+        console.log('Session after save:', req.session);
+        console.log('Session ID after save:', req.sessionID);
         
         // Return user data without password
         const { password: _, ...userData } = user;
@@ -97,20 +108,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth user endpoint with simple session check
   app.get('/api/auth/user', async (req, res) => {
     try {
+      console.log('=== /api/auth/user endpoint called ===');
       console.log('Full session object:', req.session);
       console.log('Session ID:', req.sessionID);
+      console.log('Cookies received:', req.headers.cookie);
+      console.log('Session store type:', req.session?.constructor?.name);
+      
       const userId = req.session?.userId;
       console.log('User ID from session:', userId);
+      
       if (!userId) {
+        console.log('No userId in session - returning 401');
         return res.status(401).json({ message: "Unauthorized" });
       }
+      
       let user: any | undefined;
       try {
         user = await storage.getUser(userId);
-      } catch {
+        console.log('User fetched from storage:', user ? { id: user.id, username: user.username } : 'No user found');
+      } catch (error) {
+        console.error('Error fetching user from storage:', error);
         user = undefined;
       }
+      
       if (!user && process.env.NODE_ENV !== 'production') {
+        console.log('Creating mock user for development');
         user = {
           id: 'nuvico-gallery-admin',
           email: 'admin@example.com',
@@ -119,7 +141,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           profileImageUrl: null,
         };
       }
-      if (!user) return res.status(401).json({ message: "Unauthorized" });
+      
+      if (!user) {
+        console.log('No user found - returning 401');
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
+      console.log('Returning user data:', { id: user.id, username: user.username });
       res.json(user);
     } catch (error) {
       console.error("Error fetching user:", error);

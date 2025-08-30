@@ -16,7 +16,10 @@
     "paths": {
       "@/*": ["./client/src/*"],
       "@shared/*": ["./shared/*"]
-    }
+    },
+    "target": "ES2020",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": ["server/**/*.ts", "shared/**/*.ts"],
   "exclude": ["node_modules", "dist", "client"]

@@ -7,8 +7,8 @@
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "tsx watch server/index.ts",
     "dev:client": "vite",
-    "build:server": "tsc -p server/tsconfig.json --noEmitOnError false",
-    "build:client": "cd client && npm install && npm run build",
+    "build:server": "tsc -p tsconfig.server.json --noEmitOnError false",
+    "build:client": "npm install && vite build",
     "build": "npm run build:client && npm run build:server",
     "postbuild": "copyfiles -u 1 server/.env dist/",
     "start": "cross-env NODE_ENV=production node dist/index.js",
@@ -94,6 +94,7 @@
     "@types/connect-pg-simple": "^7.0.3",
     "@types/express": "4.17.21",
     "@types/express-session": "^1.18.0",
+    "@types/memoizee": "^0.4.12",
     "@types/node": "20.16.11",
     "@types/passport": "^1.0.16",
     "@types/passport-local": "^1.0.38",
@@ -102,6 +103,7 @@
     "@types/ws": "^8.5.13",
     "@vitejs/plugin-react": "^4.3.2",
     "autoprefixer": "^10.4.20",
+    "concurrently": "^8.2.1",
     "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
     "drizzle-kit": "^0.30.4",
@@ -111,8 +113,7 @@
     "ts-node": "^10.9.2",
     "tsx": "^4.19.1",
     "typescript": "^5.6.3",
-    "vite": "^5.4.14",
-    "concurrently": "^8.2.1"
+    "vite": "^5.4.14"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.8"

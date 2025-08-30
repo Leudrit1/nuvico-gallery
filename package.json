@@ -10,7 +10,7 @@
     "build:server": "tsc -p tsconfig.server.json --noEmitOnError false",
     "build:client": "npm install && vite build",
     "build": "npm run build:client && npm run build:server",
-    "postbuild": "copyfiles -u 1 server/.env dist/ && npm run fix-imports",
+    "postbuild": "copyfiles -u 1 server/.env dist/ && copyfiles -u 1 dist/server/*.js dist/ && npm run fix-imports",
     "fix-imports": "node fix-imports.js",
     "start": "cross-env NODE_ENV=production node dist/index.js",
     "start:dev": "node dist/index.js",

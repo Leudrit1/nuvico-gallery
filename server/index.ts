@@ -9,11 +9,14 @@ const app = express();
 // Add CORS middleware
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  // Allow both the server port and Vite dev server ports
+  // Allow both the server port and Vite dev server ports, plus VPS domain
   if (origin === 'http://localhost:4000' || 
       origin === 'http://localhost:5173' || 
       origin === 'http://localhost:5174' ||
-      origin?.startsWith('http://localhost:')) {
+      origin === 'http://72.60.37.178:4000' ||
+      origin === 'http://72.60.37.178' ||
+      origin?.startsWith('http://localhost:') ||
+      origin?.startsWith('http://72.60.37.178:')) {
     res.header('Access-Control-Allow-Origin', origin);
   }
   res.header('Access-Control-Allow-Credentials', 'true');
@@ -40,10 +43,12 @@ app.use(session({
   saveUninitialized: false, // Changed to false for better security
   name: 'sessionId',
   cookie: { 
-    secure: false,
-    httpOnly: true, // Changed to true for security
+    secure: false, // Set to false for HTTP, true for HTTPS
+    httpOnly: false, // Set to false for debugging, true for production
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    sameSite: 'lax' // Use lax for better compatibility
+    sameSite: 'lax', // Use lax for better compatibility
+    domain: undefined, // Let browser set domain automatically
+    path: '/'
   }
 }));
 

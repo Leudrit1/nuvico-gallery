@@ -75,6 +75,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log('Session after save:', req.session);
         console.log('Session ID after save:', req.sessionID);
         
+        // Set cookie manually for debugging
+        res.setHeader('Set-Cookie', `sessionId=${req.sessionID}; Path=/; HttpOnly=false; SameSite=Lax; Max-Age=86400`);
+        console.log('Set-Cookie header set:', res.getHeader('Set-Cookie'));
+        
         // Return user data without password
         const { password: _, ...userData } = user;
         res.json(userData);

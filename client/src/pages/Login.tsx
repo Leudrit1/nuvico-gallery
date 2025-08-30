@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,20 +16,27 @@ export default function Login() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const { refetch } = useAuth();
+  const queryClient = useQueryClient();
 
   const loginMutation = useMutation({
     mutationFn: async (credentials: { username: string; password: string }) => {
       const response = await apiRequest("/api/auth/login", "POST", credentials);
       return await response.json();
     },
-    onSuccess: async () => {
+    onSuccess: async (userData) => {
       toast({
         title: "Success",
         description: "Logged in successfully!",
       });
-      // Refetch user data to update the UI
+      
+      // Invalidate and refetch auth query to update the UI
+      await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       await refetch();
-      setLocation("/");
+      
+      // Small delay to ensure state is updated
+      setTimeout(() => {
+        setLocation("/");
+      }, 100);
     },
     onError: (error: Error) => {
       toast({
@@ -119,8 +126,6 @@ export default function Login() {
                 )}
               </Button>
             </form>
-
-            
 
             <div className="mt-6 text-center">
               <button

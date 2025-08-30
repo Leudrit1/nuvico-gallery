@@ -29,6 +29,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Authentication endpoints
   
+  // Debug endpoint to check database users
+  app.get('/api/debug/users', async (req, res) => {
+    try {
+      const [rows] = await pool.query("SELECT * FROM users");
+      console.log('All users in database:', rows);
+      res.json({ users: rows, count: (rows as any[]).length });
+    } catch (error) {
+      console.error("Database error:", error);
+      res.status(500).json({ message: "Database error", error: String(error) });
+    }
+  });
+
   // Login endpoint
   app.post('/api/auth/login', async (req, res) => {
     try {
@@ -60,7 +72,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log('Password verified for user:', username);
 
-      // Set session properly
+      // Save user to storage for future retrieval
+      try {
+        await storage.upsertUser({
+          id: user.id,
+          email: user.email || user.username,
+          firstName: user.firstName || user.username,
+          lastName: user.lastName || '',
+          profileImageUrl: user.profileImageUrl || null
+        });
+        console.log('User saved to storage successfully');
+      } catch (storageError) {
+        console.error('Error saving user to storage:', storageError);
+        // Continue with login even if storage fails
+      }
+
       req.session.userId = user.id;
       console.log('Setting session userId:', req.session.userId);
       console.log('Session before save:', req.session);
@@ -128,11 +154,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       let user: any | undefined;
       try {
-        user = await storage.getUser(userId);
-        console.log('User fetched from storage:', user ? { id: user.id, username: user.username } : 'No user found');
+        // Query database directly instead of storage
+        const [rows] = await pool.query("SELECT * FROM users WHERE id = ?", [userId]);
+        user = (rows as any[])[0];
+        console.log('User fetched from database:', user ? { id: user.id, username: user.username } : 'No user found');
       } catch (error) {
-        console.error('Error fetching user from storage:', error);
-        user = undefined;
+        console.error('Error fetching user from database:', error);
+        // Fallback to storage
+        try {
+          user = await storage.getUser(userId);
+          console.log('User fetched from storage fallback:', user ? { id: user.id, username: user.username } : 'No user found');
+        } catch (storageError) {
+          console.error('Error fetching user from storage:', storageError);
+          user = undefined;
+        }
       }
       
       if (!user && process.env.NODE_ENV !== 'production') {

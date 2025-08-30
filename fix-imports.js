@@ -17,9 +17,17 @@ fs.readdirSync(distDir).forEach(file => {
     content = content.replace(/\.ts'/g, ".js'");
     content = content.replace(/\.ts"/g, '.js"');
     
+    // Fix @shared path aliases to relative paths (avoid double .js)
+    content = content.replace(/from "@shared\/([^"]+)"/g, 'from "../shared/$1"');
+    content = content.replace(/from '@shared\/([^']+)'/g, "from '../shared/$1'");
+    
+    // Add .js extension to relative imports that don't have it
+    content = content.replace(/from "\.\.\/shared\/([^"]+)"/g, 'from "../shared/$1.js"');
+    content = content.replace(/from '\.\.\/shared\/([^']+)'/g, "from '../shared/$1.js'");
+    
     fs.writeFileSync(filePath, content);
     console.log(`Fixed imports in ${file}`);
   }
 });
 
-console.log('Import extensions fixed successfully!');
+console.log('Import extensions and path aliases fixed successfully!');

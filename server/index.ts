@@ -9,8 +9,11 @@ const app = express();
 // Add CORS middleware
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  // Allow both the server port and Vite dev server port
-  if (origin === 'http://localhost:4000' || origin === 'http://localhost:5173') {
+  // Allow both the server port and Vite dev server ports
+  if (origin === 'http://localhost:4000' || 
+      origin === 'http://localhost:5173' || 
+      origin === 'http://localhost:5174' ||
+      origin?.startsWith('http://localhost:')) {
     res.header('Access-Control-Allow-Origin', origin);
   }
   res.header('Access-Control-Allow-Credentials', 'true');

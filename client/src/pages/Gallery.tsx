@@ -1,45 +1,13 @@
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import ArtworkCard from "@/components/ArtworkCard";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Search, Filter } from "lucide-react";
+import { Palette, Users, Globe, Award } from "lucide-react";
 
 export default function Gallery() {
-  const [filters, setFilters] = useState({
-    style: "",
-    minPrice: "",
-    maxPrice: "",
-    search: "",
-    sortBy: "newest"
-  });
-
   const { data: artworks = [], isLoading } = useQuery<any[]>({
-    queryKey: ["/api/artworks", filters]
+    queryKey: ["/api/artworks"]
   });
-
-  const styles = ["Abstract", "Landscape", "Portrait", "Contemporary", "Still Life", "Geometric"];
-
-  const handleFilterChange = (key: string, value: string) => {
-    setFilters(prev => ({ 
-      ...prev, 
-      [key]: value === "all" ? "" : value 
-    }));
-  };
-
-  const clearFilters = () => {
-    setFilters({
-      style: "",
-      minPrice: "",
-      maxPrice: "",
-      search: "",
-      sortBy: "newest"
-    });
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -55,95 +23,58 @@ export default function Gallery() {
             </p>
           </div>
 
-          {/* Filters */}
-          <div className="mb-12 space-y-4">
-            <div className="flex flex-wrap gap-4 items-center">
-              <div className="relative flex-1 min-w-[300px]">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Search artworks..."
-                  value={filters.search}
-                  onChange={(e) => handleFilterChange("search", e.target.value)}
-                  className="pl-10"
-                />
+          {/* Collection Overview Section */}
+          <div className="mb-16">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="text-center p-6 bg-warm-beige/30 rounded-xl border border-warm-brown/20">
+                <Palette className="h-12 w-12 text-warm-brown mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-charcoal mb-2">Diverse Styles</h3>
+                <p className="text-sm text-gray-600">From abstract to contemporary, discover unique artistic expressions</p>
               </div>
               
-              <Select value={filters.style} onValueChange={(value) => handleFilterChange("style", value)}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Style" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Styles</SelectItem>
-                  {styles.map((style) => (
-                    <SelectItem key={style} value={style}>{style}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Select value={filters.sortBy} onValueChange={(value) => handleFilterChange("sortBy", value)}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="newest">Newest First</SelectItem>
-                  <SelectItem value="oldest">Oldest First</SelectItem>
-                  <SelectItem value="price-low">Price: Low to High</SelectItem>
-                  <SelectItem value="price-high">Price: High to Low</SelectItem>
-                  <SelectItem value="title">Title A-Z</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Input
-                placeholder="Min Price"
-                type="number"
-                value={filters.minPrice}
-                onChange={(e) => handleFilterChange("minPrice", e.target.value)}
-                className="w-[120px]"
-              />
-
-              <Input
-                placeholder="Max Price"
-                type="number"
-                value={filters.maxPrice}
-                onChange={(e) => handleFilterChange("maxPrice", e.target.value)}
-                className="w-[120px]"
-              />
-
-              <Button onClick={clearFilters} variant="outline">
-                Clear Filters
-              </Button>
-            </div>
-
-            {/* Active Filters */}
-            <div className="flex flex-wrap gap-2">
-              {filters.style && (
-                <Badge variant="secondary" className="cursor-pointer" onClick={() => handleFilterChange("style", "")}>
-                  Style: {filters.style} ×
-                </Badge>
-              )}
-              {filters.minPrice && (
-                <Badge variant="secondary" className="cursor-pointer" onClick={() => handleFilterChange("minPrice", "")}>
-                  Min: ${filters.minPrice} ×
-                </Badge>
-              )}
-              {filters.maxPrice && (
-                <Badge variant="secondary" className="cursor-pointer" onClick={() => handleFilterChange("maxPrice", "")}>
-                  Max: ${filters.maxPrice} ×
-                </Badge>
-              )}
-              {filters.search && (
-                <Badge variant="secondary" className="cursor-pointer" onClick={() => handleFilterChange("search", "")}>
-                  Search: "{filters.search}" ×
-                </Badge>
-              )}
+              <div className="text-center p-6 bg-soft-gray/30 rounded-xl border border-charcoal/20">
+                <Users className="h-12 w-12 text-charcoal mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-charcoal mb-2">Global Artists</h3>
+                <p className="text-sm text-gray-600">Featuring talented artists from around the world</p>
+              </div>
+              
+              <div className="text-center p-6 bg-warm-beige/30 rounded-xl border border-warm-brown/20">
+                <Globe className="h-12 w-12 text-warm-brown mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-charcoal mb-2">Curated Selection</h3>
+                <p className="text-sm text-gray-600">Handpicked artworks for discerning collectors</p>
+              </div>
+              
+              <div className="text-center p-6 bg-soft-gray/30 rounded-xl border border-charcoal/20">
+                <Award className="h-12 w-12 text-charcoal mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-charcoal mb-2">Premium Quality</h3>
+                <p className="text-sm text-gray-600">Exceptional craftsmanship and artistic excellence</p>
+              </div>
             </div>
           </div>
 
-          {/* Results */}
+          {/* Collection Stats */}
+          <div className="mb-12 text-center">
+            <div className="inline-flex items-center space-x-8 bg-white/80 backdrop-blur-sm rounded-2xl px-8 py-4 border border-soft-gray">
+              <div>
+                <div className="text-2xl font-bold text-warm-brown">{artworks.length}</div>
+                <div className="text-sm text-gray-600">Artworks</div>
+              </div>
+              <div className="w-px h-8 bg-soft-gray"></div>
+              <div>
+                <div className="text-2xl font-bold text-warm-brown">6+</div>
+                <div className="text-sm text-gray-600">Styles</div>
+              </div>
+              <div className="w-px h-8 bg-soft-gray"></div>
+              <div>
+                <div className="text-2xl font-bold text-warm-brown">Worldwide</div>
+                <div className="text-sm text-gray-600">Artists</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Artworks Section */}
           <div className="mb-8">
-            <p className="text-sm text-gray-600">
-              {isLoading ? "Loading..." : `${artworks.length} artworks found`}
-            </p>
+            <h2 className="text-3xl font-bold text-charcoal mb-6 text-center">Featured Artworks</h2>
           </div>
 
           {/* Artworks Display */}
@@ -176,8 +107,8 @@ export default function Gallery() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-600 mb-2">No Artworks Found</h3>
-                <p className="text-gray-500">We couldn't find any artworks matching your criteria. Try adjusting your filters.</p>
+                <h3 className="text-xl font-semibold text-gray-600 mb-2">Collection Coming Soon</h3>
+                <p className="text-gray-500">Our curated collection is being prepared. Check back soon for amazing artworks!</p>
               </div>
             </div>
           )}

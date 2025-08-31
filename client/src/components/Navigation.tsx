@@ -8,7 +8,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Search, Menu, User, Settings, LogOut, Palette } from "lucide-react";
+import { Menu, User, Settings, LogOut, Palette } from "lucide-react";
 
 export default function Navigation() {
   const { user, isAdmin } = useAuth();
@@ -83,11 +83,6 @@ export default function Navigation() {
 
           {/* Right Side */}
           <div className="flex items-center space-x-4">
-            {/* Search Button */}
-            <Button size="icon" variant="ghost" className="text-charcoal hover:text-warm-brown">
-              <Search className="h-5 w-5" />
-            </Button>
-
             {user ? (
               <>
                 {/* Admin Panel Link - only show for admin users */}

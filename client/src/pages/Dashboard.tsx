@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import { isUnauthorizedError } from "@/lib/authUtils";
-import { Plus, Edit, Trash2, Palette } from "lucide-react";
+import { Plus, Trash2, Palette } from "lucide-react";
 import type { Artwork } from "@shared/schema";
 
 // Define User type locally
@@ -274,9 +274,6 @@ export default function Dashboard() {
                             ) : (
                               <Badge className="bg-blue-100 text-blue-800">Sold</Badge>
                             )}
-                            <Button size="sm" variant="outline">
-                              <Edit className="h-4 w-4" />
-                            </Button>
                             <Button 
                               size="sm" 
                               variant="outline" 
@@ -357,9 +354,6 @@ export default function Dashboard() {
                           ) : (
                             <Badge className="bg-blue-100 text-blue-800">Sold</Badge>
                           )}
-                          <Button size="sm" variant="outline">
-                            <Edit className="h-4 w-4" />
-                          </Button>
                           <Button 
                             size="sm" 
                             variant="outline" 

@@ -28,10 +28,8 @@ function Router() {
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />
       
-      {/* Admin-only route */}
-      {isAdmin && (
-        <Route path="/admin" component={Dashboard} />
-      )}
+      {/* Admin route - always defined, but protected in component */}
+      <Route path="/admin" component={Dashboard} />
       
       <Route component={NotFound} />
     </Switch>

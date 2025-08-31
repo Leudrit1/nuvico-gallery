@@ -24,7 +24,7 @@ type User = {
 };
 
 export default function Dashboard() {
-  const { user, isLoading: authLoading } = useAuth();
+  const { user, isLoading: authLoading, isAdmin } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [addDialogOpen, setAddDialogOpen] = useState(false);
@@ -127,20 +127,34 @@ export default function Dashboard() {
     },
   });
 
-  // Redirect to login if not authenticated
+  // Redirect to login if not authenticated or not admin
   useEffect(() => {
-    if (!authLoading && !typedUser) {
-      toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-      return;
+    if (!authLoading) {
+      if (!typedUser) {
+        toast({
+          title: "Unauthorized",
+          description: "You are logged out. Logging in again...",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 500);
+        return;
+      }
+      
+      if (!isAdmin) {
+        toast({
+          title: "Access Denied",
+          description: "You don't have admin privileges. Redirecting to homepage...",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 1000);
+        return;
+      }
     }
-  }, [typedUser, authLoading, toast]);
+  }, [typedUser, authLoading, isAdmin, toast]);
 
   const handleDeleteArtwork = (id: number) => {
     if (confirm("Are you sure you want to delete this artwork?")) {
@@ -152,7 +166,7 @@ export default function Dashboard() {
     updateProfileMutation.mutate({ isArtist: true });
   };
 
-  if (authLoading) {
+  if (authLoading || !isAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>

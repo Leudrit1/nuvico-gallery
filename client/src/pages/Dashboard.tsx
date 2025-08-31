@@ -32,6 +32,42 @@ export default function Dashboard() {
   // Type assertion for user
   const typedUser = user as User | null;
 
+  // Redirect to login if not authenticated or not admin
+  useEffect(() => {
+    if (!authLoading && (!typedUser || !isAdmin)) {
+      toast({
+        title: "Unauthorized",
+        description: "You need admin privileges to access this page. Redirecting to login...",
+        variant: "destructive",
+      });
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 1000);
+      return;
+    }
+  }, [typedUser, isAdmin, authLoading, toast]);
+
+  // Show loading while checking authentication
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  // Don't render dashboard content if not admin
+  if (!typedUser || !isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-charcoal mb-4">Access Denied</h1>
+          <p className="text-gray-600">You need admin privileges to access this page.</p>
+        </div>
+      </div>
+    );
+  }
+
   const { data: myArtworks = [], isLoading: artworksLoading } = useQuery<Artwork[]>({
     queryKey: ["/api/my-artworks"],
     enabled: !!typedUser
@@ -127,34 +163,20 @@ export default function Dashboard() {
     },
   });
 
-  // Redirect to login if not authenticated or not admin
+  // Redirect to login if not authenticated
   useEffect(() => {
-    if (!authLoading) {
-      if (!typedUser) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-        return;
-      }
-      
-      if (!isAdmin) {
-        toast({
-          title: "Access Denied",
-          description: "You don't have admin privileges. Redirecting to homepage...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/";
-        }, 1000);
-        return;
-      }
+    if (!authLoading && !typedUser) {
+      toast({
+        title: "Unauthorized",
+        description: "You are logged out. Logging in again...",
+        variant: "destructive",
+      });
+      setTimeout(() => {
+        window.location.href = "/api/login";
+      }, 500);
+      return;
     }
-  }, [typedUser, authLoading, isAdmin, toast]);
+  }, [typedUser, authLoading, toast]);
 
   const handleDeleteArtwork = (id: number) => {
     if (confirm("Are you sure you want to delete this artwork?")) {
@@ -166,7 +188,7 @@ export default function Dashboard() {
     updateProfileMutation.mutate({ isArtist: true });
   };
 
-  if (authLoading || !isAdmin) {
+  if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>

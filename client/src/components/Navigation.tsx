@@ -11,7 +11,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { Search, Menu, User, Settings, LogOut, Palette } from "lucide-react";
 
 export default function Navigation() {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const [location, setLocation] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { toast } = useToast();
@@ -90,18 +90,20 @@ export default function Navigation() {
 
             {user ? (
               <>
-                {/* Admin Panel Link */}
-                <Link href="/admin">
-                  <Button 
-                    variant="ghost" 
-                    className={`hidden sm:flex text-charcoal hover:text-warm-brown ${
-                      location === '/admin' ? 'text-warm-brown' : ''
-                    }`}
-                  >
-                    <Settings className="h-4 w-4 mr-2" />
-                    Admin Panel
-                  </Button>
-                </Link>
+                {/* Admin Panel Link - only show for admin users */}
+                {isAdmin && (
+                  <Link href="/admin">
+                    <Button 
+                      variant="ghost" 
+                      className={`hidden sm:flex text-charcoal hover:text-warm-brown ${
+                        location === '/admin' ? 'text-warm-brown' : ''
+                      }`}
+                    >
+                      <Settings className="h-4 w-4 mr-2" />
+                      Admin Panel
+                    </Button>
+                  </Link>
+                )}
 
                 {/* User Menu */}
                 <DropdownMenu>
@@ -127,13 +129,17 @@ export default function Navigation() {
                         </p>
                       </div>
                     </div>
-                    <DropdownMenuSeparator />
-                    <Link href="/admin">
-                      <DropdownMenuItem className="cursor-pointer">
-                        <Settings className="mr-2 h-4 w-4" />
-                        Admin Panel
-                      </DropdownMenuItem>
-                    </Link>
+                    {isAdmin && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <Link href="/admin">
+                          <DropdownMenuItem className="cursor-pointer">
+                            <Settings className="mr-2 h-4 w-4" />
+                            Admin Panel
+                          </DropdownMenuItem>
+                        </Link>
+                      </>
+                    )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
                       <LogOut className="mr-2 h-4 w-4" />
@@ -166,16 +172,18 @@ export default function Navigation() {
                   <NavLinks mobile />
                   {user ? (
                     <div className="border-t pt-4 space-y-2">
-                      <Link href="/admin">
-                        <Button 
-                          variant="ghost" 
-                          className="w-full justify-start"
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          <Settings className="h-4 w-4 mr-2" />
-                          Admin Panel
-                        </Button>
-                      </Link>
+                      {isAdmin && (
+                        <Link href="/admin">
+                          <Button 
+                            variant="ghost" 
+                            className="w-full justify-start"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            <Settings className="h-4 w-4 mr-2" />
+                            Admin Panel
+                          </Button>
+                        </Link>
+                      )}
                       <Button 
                         variant="ghost" 
                         className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"

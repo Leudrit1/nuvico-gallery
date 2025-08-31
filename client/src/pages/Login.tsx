@@ -33,9 +33,13 @@ export default function Login() {
       await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       await refetch();
       
-      // Small delay to ensure state is updated
+      // Small delay to ensure state is updated, then redirect based on role
       setTimeout(() => {
-        setLocation("/");
+        if (userData.role === 'admin') {
+          setLocation("/admin");
+        } else {
+          setLocation("/");
+        }
       }, 100);
     },
     onError: (error: Error) => {

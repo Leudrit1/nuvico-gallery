@@ -41,6 +41,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+
+
   // Login endpoint
   app.post('/api/auth/login', async (req, res) => {
     try {

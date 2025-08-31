@@ -15,7 +15,7 @@ import Contact from "@/pages/Contact";
 import NotFound from "@/pages/not-found";
 
 function Router() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isAdmin, isLoading } = useAuth();
 
   return (
     <Switch>
@@ -29,7 +29,7 @@ function Router() {
       <Route path="/contact" component={Contact} />
       
       {/* Admin-only route */}
-      {isAuthenticated && (
+      {isAdmin && (
         <Route path="/admin" component={Dashboard} />
       )}
       

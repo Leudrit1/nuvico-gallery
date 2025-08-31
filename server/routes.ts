@@ -29,17 +29,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Authentication endpoints
   
-  // Debug endpoint to check database users
-  app.get('/api/debug/users', async (req, res) => {
-    try {
-      const [rows] = await pool.query("SELECT * FROM users");
-      console.log('All users in database:', rows);
-      res.json({ users: rows, count: (rows as any[]).length });
-    } catch (error) {
-      console.error("Database error:", error);
-      res.status(500).json({ message: "Database error", error: String(error) });
-    }
-  });
+
 
 
 

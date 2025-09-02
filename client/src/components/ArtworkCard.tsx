@@ -19,7 +19,7 @@ export default function ArtworkCard({ artwork }: ArtworkCardProps) {
           />
           <div className="absolute top-3 right-3">
             <Badge variant="secondary" className="bg-white/90 text-gray-700">
-              ${parseFloat(artwork.price).toLocaleString()}
+              CHF {parseFloat(artwork.price).toLocaleString('de-CH')}
             </Badge>
           </div>
         </div>
@@ -29,13 +29,9 @@ export default function ArtworkCard({ artwork }: ArtworkCardProps) {
             {artwork.title}
           </h3>
           
-          {artwork.artist ? (
+          {artwork.artist && (
             <p className="text-gray-600 text-sm mb-2">
               by {artwork.artist.firstName} {artwork.artist.lastName}
-            </p>
-          ) : (
-            <p className="text-gray-600 text-sm mb-2">
-              Artist unknown
             </p>
           )}
           

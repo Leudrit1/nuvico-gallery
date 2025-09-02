@@ -94,7 +94,7 @@ export default function ArtworkDetail() {
 
               <div className="flex items-center gap-4">
                 <div className="text-3xl font-bold text-warm-brown">
-                  ${parseFloat(artwork.price).toLocaleString()}
+                  CHF {parseFloat(artwork.price).toLocaleString('de-CH')}
                 </div>
                 {artwork.isAvailable ? (
                   <Badge className="bg-green-100 text-green-800">Available</Badge>

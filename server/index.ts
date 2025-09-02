@@ -34,24 +34,24 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: false, limit: '50mb' }));
 
 // Add session middleware before routes
-app.set('trust proxy', 1);
 app.use(session({
   store: new (MemoryStore(session))({
     checkPeriod: 86400000 // prune expired entries every 24h
   }),
   secret: process.env.SESSION_SECRET || 'temp-secret-key',
-  resave: false,
-  saveUninitialized: false,
+  resave: false, // Changed to false for better performance
+  saveUninitialized: false, // Changed to false for better security
   name: 'sessionId',
-  cookie: {
-    secure: true,
-    httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000,
-    sameSite: 'none',
-    domain: undefined,
+  cookie: { 
+    secure: false, // Set to false for HTTP, true for HTTPS
+    httpOnly: false, // Set to false for debugging, true for production
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    sameSite: 'lax', // Use lax for better compatibility
+    domain: undefined, // Let browser set domain automatically
     path: '/'
   }
 }));
+
 
 // Add session debugging middleware
 app.use((req, res, next) => {

@@ -218,7 +218,7 @@ export default function Home() {
                 </div>
                 <h3 className="font-semibold text-lg mb-2">Address</h3>
                 <p className="text-gray-600 text-sm">
-                  119 Alpenstrasse<br />
+                  Blümlisalpstrasse 24<br />
                   3627 Heimberg, Switzerland
                 </p>
               </CardContent>

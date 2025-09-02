@@ -52,7 +52,7 @@ export default function Contact() {
                   Experience art in person at our beautiful gallery space
                 </p>
                 <div className="text-sm text-warm-brown font-medium">
-                  <p>119 Alpenstrasse</p>
+                  <p>Blümlisalpstrasse 24</p>
                   <p>3627 Heimberg, Switzerland</p>
                 </div>
               </CardContent>

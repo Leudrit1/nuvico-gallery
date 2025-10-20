@@ -23,6 +23,15 @@ type User = {
   profileImageUrl?: string | null;
 };
 
+// Helper function to get primary image from JSON array or single string
+function getPrimaryImage(imageUrl: string): string {
+  try {
+    const parsed = JSON.parse(imageUrl);
+    if (Array.isArray(parsed) && parsed.length > 0) return parsed[0];
+  } catch {}
+  return imageUrl;
+}
+
 export default function Dashboard() {
   const { user, isLoading: authLoading, isAdmin } = useAuth();
   const { toast } = useToast();
@@ -32,45 +41,10 @@ export default function Dashboard() {
   // Type assertion for user
   const typedUser = user as User | null;
 
-  // Redirect to login if not authenticated or not admin
-  useEffect(() => {
-    if (!authLoading && (!typedUser || !isAdmin)) {
-      toast({
-        title: "Unauthorized",
-        description: "You need admin privileges to access this page. Redirecting to login...",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/login";
-      }, 1000);
-      return;
-    }
-  }, [typedUser, isAdmin, authLoading, toast]);
-
-  // Show loading while checking authentication
-  if (authLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
-  // Don't render dashboard content if not admin
-  if (!typedUser || !isAdmin) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-charcoal mb-4">Access Denied</h1>
-          <p className="text-gray-600">You need admin privileges to access this page.</p>
-        </div>
-      </div>
-    );
-  }
-
+  // Queries and mutations MUST be declared before any early return
   const { data: myArtworks = [], isLoading: artworksLoading } = useQuery<Artwork[]>({
     queryKey: ["/api/my-artworks"],
-    enabled: !!typedUser
+    enabled: !!typedUser && !!isAdmin,
   });
 
   const deleteArtworkMutation = useMutation({
@@ -163,7 +137,20 @@ export default function Dashboard() {
     },
   });
 
-  // Redirect to login if not authenticated
+  // Redirect effects placed before early returns
+  useEffect(() => {
+    if (!authLoading && (!typedUser || !isAdmin)) {
+      toast({
+        title: "Unauthorized",
+        description: "You need admin privileges to access this page. Redirecting to login...",
+        variant: "destructive",
+      });
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 1000);
+    }
+  }, [typedUser, isAdmin, authLoading, toast]);
+
   useEffect(() => {
     if (!authLoading && !typedUser) {
       toast({
@@ -174,9 +161,29 @@ export default function Dashboard() {
       setTimeout(() => {
         window.location.href = "/api/login";
       }, 500);
-      return;
     }
   }, [typedUser, authLoading, toast]);
+
+  // Show loading while checking authentication
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  // Don't render dashboard content if not admin
+  if (!typedUser || !isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-charcoal mb-4">Access Denied</h1>
+          <p className="text-gray-600">You need admin privileges to access this page.</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleDeleteArtwork = (id: number) => {
     if (confirm("Are you sure you want to delete this artwork?")) {
@@ -187,16 +194,6 @@ export default function Dashboard() {
   const handleBecomeArtist = () => {
     updateProfileMutation.mutate({ isArtist: true });
   };
-
-  if (authLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
-
-
 
   return (
     <div className="min-h-screen bg-background">
@@ -257,14 +254,14 @@ export default function Dashboard() {
                         <div key={artwork.id} className="flex items-center justify-between p-4 bg-soft-gray rounded-lg hover:bg-medium-gray/50 transition-colors">
                           <div className="flex items-center space-x-4">
                             <img
-                              src={artwork.imageUrl}
+                              src={getPrimaryImage(artwork.imageUrl)}
                               alt={artwork.title}
                               className="w-16 h-16 rounded-lg object-cover"
                             />
                             <div>
                               <h3 className="font-semibold text-lg">{artwork.title}</h3>
                               <p className="text-sm text-gray-600">
-                                {artwork.style} • ${parseFloat(artwork.price).toLocaleString()}
+                                {artwork.style} • CHF {parseFloat(artwork.price).toLocaleString('de-CH')}
                               </p>
                             </div>
                           </div>
@@ -337,14 +334,14 @@ export default function Dashboard() {
                       <div key={artwork.id} className="flex items-center justify-between p-4 bg-soft-gray rounded-lg hover:bg-medium-gray/50 transition-colors">
                         <div className="flex items-center space-x-4">
                           <img
-                            src={artwork.imageUrl}
+                            src={getPrimaryImage(artwork.imageUrl)}
                             alt={artwork.title}
                             className="w-16 h-16 rounded-lg object-cover"
                           />
                           <div>
                             <h3 className="font-semibold text-lg">{artwork.title}</h3>
                             <p className="text-sm text-gray-600">
-                              {artwork.style} • ${parseFloat(artwork.price).toLocaleString()}
+                              {artwork.style} • CHF {parseFloat(artwork.price).toLocaleString('de-CH')}
                             </p>
                           </div>
                         </div>
@@ -370,10 +367,12 @@ export default function Dashboard() {
               </Card>
             </>
           )}
+
+          {/* Add Artwork Dialog */}
+          <AddArtworkDialog onOpenChange={setAddDialogOpen} />
         </div>
       </div>
 
-      <AddArtworkDialog open={addDialogOpen} onOpenChange={setAddDialogOpen} />
       <Footer />
     </div>
   );

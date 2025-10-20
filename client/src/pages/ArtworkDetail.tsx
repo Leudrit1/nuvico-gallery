@@ -8,8 +8,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { Heart, ArrowLeft, Calendar, Ruler, Palette } from "lucide-react";
+import { Heart, ArrowLeft, Calendar, Ruler, Palette, ChevronLeft, ChevronRight } from "lucide-react";
 import type { ArtworkWithArtist } from "@shared/schema";
+import { useMemo, useState } from "react";
 
 export default function ArtworkDetail() {
   const { id } = useParams();
@@ -21,6 +22,17 @@ export default function ArtworkDetail() {
     queryKey: [`/api/artworks/${id}`],
     enabled: !!id
   });
+
+  const images = useMemo(() => {
+    if (!artwork) return [] as string[];
+    try {
+      const parsed = JSON.parse(artwork.imageUrl as any);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed as string[];
+    } catch {}
+    return artwork?.imageUrl ? [artwork.imageUrl] : [];
+  }, [artwork]);
+  const [current, setCurrent] = useState(0);
+  const hasMultiple = images.length > 1;
 
   if (isLoading) {
     return (
@@ -77,13 +89,33 @@ export default function ArtworkDetail() {
           </div>
 
           <div className="grid lg:grid-cols-2 gap-12">
-            {/* Artwork Image */}
+            {/* Artwork Image / Slideshow */}
             <div className="relative">
-              <img
-                src={artwork.imageUrl}
-                alt={artwork.title}
-                className="w-full h-auto rounded-xl shadow-lg"
-              />
+              {/* Main image */}
+              {images.length > 0 && (
+                <img
+                  src={images[current]}
+                  alt={artwork.title}
+                  className="w-full h-auto rounded-xl shadow-lg"
+                />
+              )}
+              {/* Controls */}
+              {hasMultiple && (
+                <>
+                  <button aria-label="Previous" className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow" onClick={() => setCurrent((current - 1 + images.length) % images.length)}>
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <button aria-label="Next" className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow" onClick={() => setCurrent((current + 1) % images.length)}>
+                    <ChevronRight className="h-5 w-5" />
+                  </button>
+                  {/* Thumbnails/dots */}
+                  <div className="flex gap-2 justify-center mt-3">
+                    {images.map((_, idx) => (
+                      <button key={idx} aria-label={`Go to slide ${idx+1}`} className={`h-2.5 w-2.5 rounded-full ${idx === current ? 'bg-warm-brown' : 'bg-gray-300'}`} onClick={() => setCurrent(idx)} />
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Artwork Details */}

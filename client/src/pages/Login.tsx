@@ -75,7 +75,7 @@ export default function Login() {
               </div>
             </div>
             <CardTitle className="text-3xl font-bold text-charcoal mb-2">
-              Welcome to <span className="text-warm-brown">NUVICO</span>
+              Welcome to <span className="text-warm-brown">NUVICO - Art gallery & Moving services</span>
             </CardTitle>
             <p className="text-gray-600">Sign in to access your art gallery dashboard</p>
           </CardHeader>

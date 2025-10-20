@@ -2,8 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Palette, Users, Globe, Award } from "lucide-react";
+import { t, useLanguageChange } from '@/lib/i18n';
+import { useState, useEffect } from "react";
 
 export default function Landing() {
+  useLanguageChange(); // Subscribe to language changes
+
   const handleLogin = () => {
     window.location.href = "/api/login";
   };
@@ -14,10 +18,10 @@ export default function Landing() {
       <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-sm z-50 border-b border-soft-gray">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="text-2xl font-bold text-warm-brown">NUVICO</div>
-            <Button onClick={handleLogin} className="warm-brown text-white hover:golden-brown">
-              Sign In
-            </Button>
+            <div className="text-2xl font-bold text-warm-brown">{t('footer_title')}</div>
+              <Button onClick={handleLogin} className="warm-brown text-white hover:golden-brown">
+                {t('sign_in')}
+              </Button>
           </div>
         </div>
       </nav>
@@ -28,19 +32,19 @@ export default function Landing() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="animate-slide-up">
               <h1 className="text-5xl lg:text-6xl font-bold text-charcoal mb-6 leading-tight">
-                Discover
-                <span className="text-warm-brown"> Exceptional</span>
-                <br />Art
+                {t('discover_exceptional_art')}
+                <span className="text-warm-brown"> {t('exceptional')}</span>
+                <br />{t('art')}
               </h1>
               <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                NUVICO connects art enthusiasts with talented artists worldwide. Explore, collect, and invest in carefully curated paintings that speak to your soul.
+                {t('landing_description')}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button onClick={handleLogin} className="warm-brown text-white hover:golden-brown px-8 py-3">
-                  Explore Gallery
+                  {t('explore_gallery')}
                 </Button>
                 <Button onClick={handleLogin} variant="outline" className="border-warm-brown text-warm-brown hover:bg-warm-brown hover:text-white px-8 py-3">
-                  Sell Your Art
+                  {t('sell_your_art')}
                 </Button>
               </div>
             </div>
@@ -61,9 +65,9 @@ export default function Landing() {
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-charcoal mb-4">Why Choose NUVICO?</h2>
+            <h2 className="text-4xl font-bold text-charcoal mb-4">{t('why_choose_us')}</h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Join our community of artists and art lovers from around the world
+              {t('join_community')}
             </p>
           </div>
           
@@ -73,9 +77,9 @@ export default function Landing() {
                 <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                   <Palette className="h-6 w-6 text-warm-brown" />
                 </div>
-                <h3 className="font-semibold text-lg mb-2">Curated Collection</h3>
+                <h3 className="font-semibold text-lg mb-2">{t('curated_collection')}</h3>
                 <p className="text-gray-600 text-sm">
-                  Handpicked artworks from talented artists worldwide
+                  {t('handpicked_artworks')}
                 </p>
               </CardContent>
             </Card>
@@ -85,9 +89,9 @@ export default function Landing() {
                 <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                   <Users className="h-6 w-6 text-warm-brown" />
                 </div>
-                <h3 className="font-semibold text-lg mb-2">Artist Community</h3>
+                <h3 className="font-semibold text-lg mb-2">{t('artist_community')}</h3>
                 <p className="text-gray-600 text-sm">
-                  Connect with artists and collectors in our vibrant community
+                  {t('connect_artists_collectors')}
                 </p>
               </CardContent>
             </Card>
@@ -97,9 +101,9 @@ export default function Landing() {
                 <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                   <Globe className="h-6 w-6 text-warm-brown" />
                 </div>
-                <h3 className="font-semibold text-lg mb-2">Global Reach</h3>
+                <h3 className="font-semibold text-lg mb-2">{t('global_reach')}</h3>
                 <p className="text-gray-600 text-sm">
-                  Artists from over 50 countries showcase their work
+                  {t('artists_countries')}
                 </p>
               </CardContent>
             </Card>
@@ -109,9 +113,9 @@ export default function Landing() {
                 <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                   <Award className="h-6 w-6 text-warm-brown" />
                 </div>
-                <h3 className="font-semibold text-lg mb-2">Quality Assured</h3>
+                <h3 className="font-semibold text-lg mb-2">{t('quality_assured')}</h3>
                 <p className="text-gray-600 text-sm">
-                  Every artwork is verified for authenticity and quality
+                  {t('verified_authenticity')}
                 </p>
               </CardContent>
             </Card>
@@ -125,19 +129,19 @@ export default function Landing() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
             <div>
               <div className="text-4xl font-bold text-warm-brown mb-2">500+</div>
-              <div className="text-gray-600">Artists</div>
+              <div className="text-gray-600">{t('artists')}</div>
             </div>
             <div>
               <div className="text-4xl font-bold text-warm-brown mb-2">2,400+</div>
-              <div className="text-gray-600">Artworks</div>
+              <div className="text-gray-600">{t('artworks')}</div>
             </div>
             <div>
               <div className="text-4xl font-bold text-warm-brown mb-2">50+</div>
-              <div className="text-gray-600">Countries</div>
+              <div className="text-gray-600">{t('countries')}</div>
             </div>
             <div>
               <div className="text-4xl font-bold text-warm-brown mb-2">98%</div>
-              <div className="text-gray-600">Satisfaction</div>
+              <div className="text-gray-600">{t('satisfaction')}</div>
             </div>
           </div>
         </div>
@@ -146,12 +150,12 @@ export default function Landing() {
       {/* CTA Section */}
       <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-bold text-charcoal mb-6">Ready to Start Your Art Journey?</h2>
+          <h2 className="text-4xl font-bold text-charcoal mb-6">{t('ready_start_journey')}</h2>
           <p className="text-lg text-gray-600 mb-8">
-            Join thousands of artists and collectors who trust NUVICO for authentic art experiences
+            {t('join_thousands_trust')}
           </p>
           <Button onClick={handleLogin} size="lg" className="warm-brown text-white hover:golden-brown px-8 py-4 text-lg">
-            Get Started Today
+            {t('get_started_today')}
           </Button>
         </div>
       </section>
@@ -159,11 +163,11 @@ export default function Landing() {
       {/* Footer */}
       <footer className="bg-charcoal text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="text-2xl font-bold text-warm-brown mb-4">NUVICO</div>
+          <div className="text-2xl font-bold text-warm-brown mb-4">{t('footer_title')}</div>
           <p className="text-gray-300 mb-6">
-            Connecting artists and collectors through exceptional art experiences.
+            {t('connecting_artists_collectors')}
           </p>
-          <p className="text-gray-400 text-sm">© 2024 NUVICO. All rights reserved.</p>
+          <p className="text-gray-400 text-sm">© 2024 {t('footer_title')}. {t('all_rights_reserved')}</p>
         </div>
       </footer>
     </div>

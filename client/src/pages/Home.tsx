@@ -1,58 +1,64 @@
-import { useQuery } from "@tanstack/react-query";
+import { Link } from "wouter";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { t, useLanguageChange } from "@/lib/i18n";
+import { useQuery } from "@tanstack/react-query";
 import ArtworkCard from "@/components/ArtworkCard";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Link } from "wouter";
-import { Palette, Users, Globe, Award, MapPin, Phone, Mail, Clock, Shield, Heart } from "lucide-react";
-import fotoIme from './Starry-Night-canvas-Vincent-van-Gogh-New-1889.webp';
+import { MapPin, Phone, Mail, Clock, Shield, Truck, Boxes, Palette, Image, Calendar } from "lucide-react";
 
 export default function Home() {
-  const { data: featuredArtworks = [], isLoading: artworksLoading } = useQuery<any[]>({
-    queryKey: ["/api/artworks", { featured: true }]
-  });
+  useLanguageChange(); // Subscribe to language changes
 
-  // const { data: artists = [], isLoading: artistsLoading } = useQuery<any[]>({
-  //   queryKey: ["/api/artists"]
-  // });
+  const { data: artworks = [], isLoading } = useQuery<any[]>({
+    queryKey: ["/api/artworks"],
+  });
 
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      
-      {/* Hero Section */}
-      <section className="pt-24 pb-16 bg-gradient-to-br from-warm-beige to-soft-gray">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      {/* Hero - Art Gallery primary */}
+      <section className="relative overflow-hidden pt-52 pb-48 min-h-[900px] bg-gradient-to-br from-warm-beige to-soft-gray">
+        {/* Background image */}
+        <div className="absolute inset-0">
+          <div
+            className="absolute inset-0 bg-center bg-cover opacity-60"
+            style={{ backgroundImage: "url('/attached_assets/images/luke-heibert-gthSas4oYC0-unsplash.jpg'), url('https://images.unsplash.com/photo-1578662996442-48f60103fc96?auto=format&fit=crop&w=1600&q=80')" }}
+          ></div>
+          <div className="absolute inset-0 bg-black/30"></div>
+        </div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="animate-slide-up">
-              <h1 className="text-5xl lg:text-6xl font-bold text-charcoal mb-6 leading-tight">
-                Welcome to
+              <h1 className="text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+                {t('hero_title')}
                 <span className="text-warm-brown"> NUVICO</span>
-                <br />Art Gallery
+                <br />{t('hero_sub')}
               </h1>
-              <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                NUVICO showcases exceptional contemporary artworks and unique paintings. Discover our carefully curated collection from talented artists around the world.
+              <p className="text-lg text-white/90 mb-8 leading-relaxed">
+                {t('hero_description')}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/gallery">
+                <Link href="/shop">
                   <Button className="warm-brown text-white hover:golden-brown px-8 py-3">
-                    View Our Collection
+                    {t('explore_shop')}
                   </Button>
                 </Link>
                 <Link href="/about">
-                  <Button variant="outline" className="border-warm-brown text-warm-brown hover:bg-warm-brown hover:text-white px-8 py-3">
-                    About Us
+                  <Button variant="outline" className="border-white text-black hover:bg-white hover:text-charcoal px-8 py-3">
+                    {t('about_us')}
                   </Button>
                 </Link>
               </div>
             </div>
             <div className="relative animate-fade-in">
-              <img src={ fotoIme } 
-                alt="Modern art gallery interior" 
-                className="rounded-2xl shadow-2xl w-full h-auto animate-float"
+              <img
+                src="/attached_assets/images/rachel-crosby-pUANppRzCI4-unsplash.jpg"
+                alt="Gallery interior preview"
+                className="rounded-2xl shadow-2xl w-full h-[320px] sm:h-[420px] object-cover border border-soft-gray"
+                onError={(e) => { (e.currentTarget as HTMLImageElement).src = 'https://images.unsplash.com/photo-1582582429416-87f911af8ac9?auto=format&fit=crop&w=1200&q=80'; }}
               />
               <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-golden-brown/20 rounded-full blur-xl"></div>
               <div className="absolute -top-6 -right-6 w-24 h-24 bg-warm-brown/20 rounded-full blur-xl"></div>
@@ -61,17 +67,75 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured Artworks */}
+      {/* Services promo - Art Gallery Services */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-charcoal mb-4">Our Featured Collection</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Discover exceptional artworks carefully selected to showcase the finest contemporary art
-            </p>
+            <h2 className="text-4xl font-bold text-charcoal mb-4">{t('home_art_gallery_services')}</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">Curation, framing, delivery and private viewings to enhance your art experience.</p>
           </div>
 
-          {artworksLoading ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <Card className="hover-lift">
+              <CardContent className="pt-6 text-center">
+                <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Palette className="h-6 w-6 text-warm-brown" />
+                </div>
+                <h3 className="font-semibold text-lg mb-2">{t('curation')}</h3>
+                <p className="text-gray-600 text-sm">{t('curation_desc')}</p>
+              </CardContent>
+            </Card>
+
+            <Card className="hover-lift">
+              <CardContent className="pt-6 text-center">
+                <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Image className="h-6 w-6 text-warm-brown" />
+                </div>
+                <h3 className="font-semibold text-lg mb-2">{t('framing')}</h3>
+                <p className="text-gray-600 text-sm">{t('framing_desc')}</p>
+              </CardContent>
+            </Card>
+
+            <Card className="hover-lift">
+              <CardContent className="pt-6 text-center">
+                <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Truck className="h-6 w-6 text-warm-brown" />
+                </div>
+                <h3 className="font-semibold text-lg mb-2">{t('delivery')}</h3>
+                <p className="text-gray-600 text-sm">{t('delivery_desc')}</p>
+              </CardContent>
+            </Card>
+
+            <Card className="hover-lift">
+              <CardContent className="pt-6 text-center">
+                <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Calendar className="h-6 w-6 text-warm-brown" />
+                </div>
+                <h3 className="font-semibold text-lg mb-2">{t('private_viewing')}</h3>
+                <p className="text-gray-600 text-sm">{t('private_viewing_desc')}</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="text-center mt-10">
+            <Link href="/about">
+              <Button variant="outline" className="border-warm-brown text-warm-brown hover:bg-warm-brown hover:text-white px-8 py-3">
+                {t('home_learn_more')}
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Our Art Gallery - show up to 6 items from Shop */}
+      <section className="py-20 warm-beige">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-charcoal mb-4">{t('our_art_gallery')}</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">A glimpse from our Shop. Discover unique pieces ready for a new home.</p>
+          </div>
+
+          {isLoading ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[...Array(6)].map((_, i) => (
                 <div key={i} className="animate-pulse">
@@ -84,29 +148,29 @@ export default function Home() {
             </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {featuredArtworks.slice(0, 6).map((artwork) => (
+              {artworks.slice(0, 6).map((artwork) => (
                 <ArtworkCard key={artwork.id} artwork={artwork} />
               ))}
             </div>
           )}
 
           <div className="text-center mt-12">
-            <Link href="/gallery">
+            <Link href="/shop">
               <Button variant="outline" className="border-warm-brown text-warm-brown hover:bg-warm-brown hover:text-white px-8 py-3">
-                Explore Full Collection
+                {t('see_more')}
               </Button>
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Company Showcase */}
+      {/* Why choose us */}
       <section className="py-20 warm-beige">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-charcoal mb-4">Why Choose NUVICO</h2>
+            <h2 className="text-4xl font-bold text-charcoal mb-4">{t('why_choose_us')}</h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Experience excellence in contemporary art curation and gallery services
+              {t('why_choose_desc')}
             </p>
           </div>
 
@@ -114,86 +178,30 @@ export default function Home() {
             <Card className="hover-lift">
               <CardContent className="pt-6 text-center">
                 <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <Palette className="h-6 w-6 text-warm-brown" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">Curated Excellence</h3>
-                <p className="text-gray-600 text-sm">
-                  Every piece in our collection is carefully selected for its artistic merit and quality
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="hover-lift">
-              <CardContent className="pt-6 text-center">
-                <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <Globe className="h-6 w-6 text-warm-brown" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">Global Perspective</h3>
-                <p className="text-gray-600 text-sm">
-                  Featuring contemporary works from established and emerging artists worldwide
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="hover-lift">
-              <CardContent className="pt-6 text-center">
-                <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <Award className="h-6 w-6 text-warm-brown" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">Professional Service</h3>
-                <p className="text-gray-600 text-sm">
-                  Expert consultation and personalized service for collectors and art enthusiasts
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Art Experience Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-charcoal mb-4">The NUVICO Experience</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Immerse yourself in a world where art meets excellence, and every visit becomes a memorable journey
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="hover-lift">
-              <CardContent className="pt-6 text-center">
-                <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <Heart className="h-6 w-6 text-warm-brown" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">Passionate Curation</h3>
-                <p className="text-gray-600 text-sm">
-                  Each artwork tells a story, carefully selected to inspire and move our visitors
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="hover-lift">
-              <CardContent className="pt-6 text-center">
-                <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <Users className="h-6 w-6 text-warm-brown" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">Community Connection</h3>
-                <p className="text-gray-600 text-sm">
-                  Join a vibrant community of artists, collectors, and art enthusiasts
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="hover-lift">
-              <CardContent className="pt-6 text-center">
-                <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                   <Shield className="h-6 w-6 text-warm-brown" />
                 </div>
-                <h3 className="font-semibold text-lg mb-2">Authenticity Guaranteed</h3>
-                <p className="text-gray-600 text-sm">
-                  Every piece comes with provenance and authenticity certification
-                </p>
+                <h3 className="font-semibold text-lg mb-2">{t('fully_insured')}</h3>
+                <p className="text-gray-600 text-sm">{t('fully_insured_desc')}</p>
+              </CardContent>
+            </Card>
+
+            <Card className="hover-lift">
+              <CardContent className="pt-6 text-center">
+                <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Boxes className="h-6 w-6 text-warm-brown" />
+                </div>
+                <h3 className="font-semibold text-lg mb-2">{t('packing_experts')}</h3>
+                <p className="text-gray-600 text-sm">{t('packing_experts_desc')}</p>
+              </CardContent>
+            </Card>
+
+            <Card className="hover-lift">
+              <CardContent className="pt-6 text-center">
+                <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Truck className="h-6 w-6 text-warm-brown" />
+                </div>
+                <h3 className="font-semibold text-lg mb-2">{t('on_time_delivery')}</h3>
+                <p className="text-gray-600 text-sm">{t('on_time_delivery_desc')}</p>
               </CardContent>
             </Card>
           </div>
@@ -201,12 +209,12 @@ export default function Home() {
       </section>
 
       {/* Contact & Location */}
-      <section className="py-16 warm-beige">
+      <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-charcoal mb-4">Visit Our Gallery</h2>
+            <h2 className="text-3xl font-bold text-charcoal mb-4">{t('contact_service_area')}</h2>
             <p className="text-lg text-gray-600">
-              Discover exceptional art in our beautifully curated space
+              {t('get_quote_schedule')}
             </p>
           </div>
 
@@ -216,10 +224,9 @@ export default function Home() {
                 <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                   <MapPin className="h-6 w-6 text-warm-brown" />
                 </div>
-                <h3 className="font-semibold text-lg mb-2">Address</h3>
+                <h3 className="font-semibold text-lg mb-2">{t('service_area')}</h3>
                 <p className="text-gray-600 text-sm">
-                  Blümlisalpstrasse 24<br />
-                  3627 Heimberg, Switzerland
+                  Berne • Thun • Interlaken • Zurich • Basel
                 </p>
               </CardContent>
             </Card>
@@ -229,10 +236,9 @@ export default function Home() {
                 <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                   <Phone className="h-6 w-6 text-warm-brown" />
                 </div>
-                <h3 className="font-semibold text-lg mb-2">Phone</h3>
+                <h3 className="font-semibold text-lg mb-2">{t('phone')}</h3>
                 <p className="text-gray-600 text-sm">
-                  +41 76 451 93 98<br />
-                  +41 79 782 50 77
+                  +41 76 451 93 98
                 </p>
               </CardContent>
             </Card>
@@ -242,7 +248,7 @@ export default function Home() {
                 <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                   <Mail className="h-6 w-6 text-warm-brown" />
                 </div>
-                <h3 className="font-semibold text-lg mb-2">Email</h3>
+                <h3 className="font-semibold text-lg mb-2">{t('email')}</h3>
                 <p className="text-gray-600 text-sm">
                   info@nuvico.ch
                 </p>
@@ -254,11 +260,9 @@ export default function Home() {
                 <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                   <Clock className="h-6 w-6 text-warm-brown" />
                 </div>
-                <h3 className="font-semibold text-lg mb-2">Hours</h3>
+                <h3 className="font-semibold text-lg mb-2">{t('availability')}</h3>
                 <p className="text-gray-600 text-sm">
-                  Monday - Friday: 10AM-7PM<br />
-                  Saturday: 10AM-6PM<br />
-                  Sunday: 11AM-5PM
+                  Mon-Sat: 8:00-18:00 • Emergencies by request
                 </p>
               </CardContent>
             </Card>
@@ -266,14 +270,14 @@ export default function Home() {
 
           <div className="text-center mt-12">
             <Link href="/contact">
-              <Button className="warm-brown text-white hover:golden-brown px-8 py-3 mr-4">
-                Get Directions
-              </Button>
+                <Button className="warm-brown text-white hover:golden-brown px-8 py-3 mr-4">
+                  {t('request_quote')}
+                </Button>
             </Link>
-            <Link href="/contact">
-              <Button variant="outline" className="border-warm-brown text-warm-brown hover:bg-warm-brown hover:text-white px-8 py-3">
-                Book Private Viewing
-              </Button>
+            <Link href="/shop">
+                <Button variant="outline" className="border-warm-brown text-warm-brown hover:bg-warm-brown hover:text-white px-8 py-3">
+                  {t('browse_shop')}
+                </Button>
             </Link>
           </div>
         </div>

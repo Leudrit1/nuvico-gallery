@@ -3,8 +3,11 @@ import Footer from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Palette, Users, Globe, Award, Heart, Shield, Zap } from "lucide-react";
+import { t, useLanguageChange } from '@/lib/i18n';
+import { useState, useEffect } from "react";
 
 export default function About() {
+  useLanguageChange(); // Subscribe to language changes
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -13,9 +16,9 @@ export default function About() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Hero Section */}
           <section className="text-center mb-20">
-            <h1 className="text-5xl font-bold text-charcoal mb-6">About NUVICO</h1>
+            <h1 className="text-5xl font-bold text-charcoal mb-6">{t('about_title')}</h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              NUVICO Gallery is a premier destination for contemporary art, featuring a carefully curated collection of exceptional works. Our gallery showcases outstanding pieces that represent the finest in modern artistic expression and craftsmanship.
+              {t('about_description')}
             </p>
           </section>
 
@@ -32,31 +35,31 @@ export default function About() {
               </div>
             </div>
             <div>
-              <h2 className="text-4xl font-bold text-charcoal mb-6">Our Story</h2>
+              <h2 className="text-4xl font-bold text-charcoal mb-6">{t('our_story')}</h2>
               <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                NUVICO Gallery was established with a vision to create an exceptional space for contemporary art appreciation. Our collection features carefully selected works that demonstrate outstanding artistic merit and creative vision.
+                {t('our_story_desc1')}
               </p>
               <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                We are dedicated to presenting art that inspires, challenges, and enriches the cultural landscape, providing our visitors with meaningful encounters with contemporary artistic expression.
+                {t('our_story_desc2')}
               </p>
               
               {/* Stats */}
               <div className="grid grid-cols-2 gap-6">
                 <div className="text-center">
                   <div className="text-3xl font-bold text-warm-brown mb-2">15+</div>
-                  <div className="text-gray-600">Years Experience</div>
+                  <div className="text-gray-600">{t('years_experience')}</div>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold text-warm-brown mb-2">200+</div>
-                  <div className="text-gray-600">Curated Works</div>
+                  <div className="text-gray-600">{t('curated_works')}</div>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold text-warm-brown mb-2">25+</div>
-                  <div className="text-gray-600">Exhibitions</div>
+                  <div className="text-gray-600">{t('exhibitions')}</div>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold text-warm-brown mb-2">5000+</div>
-                  <div className="text-gray-600">Visitors</div>
+                  <div className="text-gray-600">{t('visitors')}</div>
                 </div>
               </div>
             </div>
@@ -65,9 +68,9 @@ export default function About() {
           {/* Values Section */}
           <section className="mb-20">
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-charcoal mb-4">Our Values</h2>
+              <h2 className="text-4xl font-bold text-charcoal mb-4">{t('our_values')}</h2>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                These principles guide everything we do at NUVICO
+                {t('our_values_desc')}
               </p>
             </div>
 
@@ -77,9 +80,9 @@ export default function About() {
                   <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                     <Heart className="h-6 w-6 text-warm-brown" />
                   </div>
-                  <h3 className="font-semibold text-lg mb-3">Passion for Art</h3>
+                  <h3 className="font-semibold text-lg mb-3">{t('passion_for_art')}</h3>
                   <p className="text-gray-600">
-                    We believe art has the power to inspire, heal, and connect people across cultures and boundaries.
+                    {t('passion_for_art_desc')}
                   </p>
                 </CardContent>
               </Card>
@@ -89,9 +92,9 @@ export default function About() {
                   <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                     <Shield className="h-6 w-6 text-warm-brown" />
                   </div>
-                  <h3 className="font-semibold text-lg mb-3">Authenticity</h3>
+                  <h3 className="font-semibold text-lg mb-3">{t('authenticity')}</h3>
                   <p className="text-gray-600">
-                    Every artwork on our platform is verified for quality and authenticity by our expert curators.
+                    {t('authenticity_desc')}
                   </p>
                 </CardContent>
               </Card>
@@ -101,9 +104,9 @@ export default function About() {
                   <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                     <Users className="h-6 w-6 text-warm-brown" />
                   </div>
-                  <h3 className="font-semibold text-lg mb-3">Community</h3>
+                  <h3 className="font-semibold text-lg mb-3">{t('community')}</h3>
                   <p className="text-gray-600">
-                    We foster a supportive community where artists and collectors can connect and grow together.
+                    {t('community_desc')}
                   </p>
                 </CardContent>
               </Card>
@@ -113,12 +116,12 @@ export default function About() {
           {/* Mission Section */}
           <section className="bg-warm-beige rounded-2xl p-12 mb-20">
             <div className="text-center">
-              <h2 className="text-4xl font-bold text-charcoal mb-6">Our Mission</h2>
+              <h2 className="text-4xl font-bold text-charcoal mb-6">{t('our_mission')}</h2>
               <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-8">
-                To democratize the art world by providing a platform where exceptional art is discoverable, artists are fairly compensated, and collectors can build meaningful collections that reflect their personal journey and aesthetic vision.
+                {t('our_mission_desc')}
               </p>
               <Badge className="bg-warm-brown text-white px-6 py-2 text-sm">
-                Connecting Art & Hearts Worldwide
+                {t('connecting_art_hearts')}
               </Badge>
             </div>
           </section>
@@ -126,9 +129,9 @@ export default function About() {
           {/* Why Choose Us */}
           <section>
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-charcoal mb-4">Why Choose NUVICO?</h2>
+              <h2 className="text-4xl font-bold text-charcoal mb-4">{t('why_choose_us')}</h2>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                What makes us different from other art marketplaces
+                {t('why_choose_us_desc')}
               </p>
             </div>
 
@@ -138,9 +141,9 @@ export default function About() {
                   <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                     <Palette className="h-6 w-6 text-warm-brown" />
                   </div>
-                  <h3 className="font-semibold text-lg mb-2">Curated Collection</h3>
+                  <h3 className="font-semibold text-lg mb-2">{t('curated_collection')}</h3>
                   <p className="text-gray-600 text-sm">
-                    Every piece is hand-selected by our team of art experts
+                    {t('curated_collection_desc')}
                   </p>
                 </CardContent>
               </Card>
@@ -150,9 +153,9 @@ export default function About() {
                   <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                     <Globe className="h-6 w-6 text-warm-brown" />
                   </div>
-                  <h3 className="font-semibold text-lg mb-2">Global Reach</h3>
+                  <h3 className="font-semibold text-lg mb-2">{t('global_reach')}</h3>
                   <p className="text-gray-600 text-sm">
-                    Connect with artists and collectors from around the world
+                    {t('global_reach_desc')}
                   </p>
                 </CardContent>
               </Card>
@@ -162,9 +165,9 @@ export default function About() {
                   <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                     <Zap className="h-6 w-6 text-warm-brown" />
                   </div>
-                  <h3 className="font-semibold text-lg mb-2">Easy Platform</h3>
+                  <h3 className="font-semibold text-lg mb-2">{t('easy_platform')}</h3>
                   <p className="text-gray-600 text-sm">
-                    Intuitive tools for buying, selling, and managing your art
+                    {t('easy_platform_desc')}
                   </p>
                 </CardContent>
               </Card>
@@ -174,9 +177,9 @@ export default function About() {
                   <div className="w-12 h-12 bg-warm-brown/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                     <Award className="h-6 w-6 text-warm-brown" />
                   </div>
-                  <h3 className="font-semibold text-lg mb-2">Quality Assured</h3>
+                  <h3 className="font-semibold text-lg mb-2">{t('quality_assured')}</h3>
                   <p className="text-gray-600 text-sm">
-                    100% authentic artworks with quality guarantee
+                    {t('quality_assured_desc')}
                   </p>
                 </CardContent>
               </Card>

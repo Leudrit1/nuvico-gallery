@@ -3,8 +3,12 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import ArtworkCard from "@/components/ArtworkCard";
 import { Palette, Users, Globe, Award } from "lucide-react";
+import { t, useLanguageChange } from "@/lib/i18n";
+import { useState, useEffect } from "react";
 
 export default function Gallery() {
+  useLanguageChange(); // Subscribe to language changes
+
   const { data: artworks = [], isLoading } = useQuery<any[]>({
     queryKey: ["/api/artworks"]
   });
@@ -17,64 +21,62 @@ export default function Gallery() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="text-center mb-12">
-            <h1 className="text-5xl font-bold text-charcoal mb-6">NUVICO Collection</h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Explore our complete curated collection of contemporary artworks, featuring exceptional pieces that represent the finest in modern artistic expression
-            </p>
+            <h1 className="text-5xl font-bold text-charcoal mb-6">{t('gallery_title')}</h1>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">{t('gallery_sub')}</p>
           </div>
 
-          {/* Collection Overview Section */}
+          {/* Shop Highlights */}
           <div className="mb-16">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="text-center p-6 bg-warm-beige/30 rounded-xl border border-warm-brown/20">
                 <Palette className="h-12 w-12 text-warm-brown mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-charcoal mb-2">Diverse Styles</h3>
-                <p className="text-sm text-gray-600">From abstract to contemporary, discover unique artistic expressions</p>
+                <h3 className="text-lg font-semibold text-charcoal mb-2">{t('featured_items')}</h3>
+                <p className="text-sm text-gray-600">Pre-loved items in great condition, inspected by our team</p>
               </div>
-              
+
               <div className="text-center p-6 bg-soft-gray/30 rounded-xl border border-charcoal/20">
                 <Users className="h-12 w-12 text-charcoal mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-charcoal mb-2">Global Artists</h3>
-                <p className="text-sm text-gray-600">Featuring talented artists from around the world</p>
+                <h3 className="text-lg font-semibold text-charcoal mb-2">{t('pickup_delivery')}</h3>
+                <p className="text-sm text-gray-600">Fast pickup from our storage or scheduled delivery on request</p>
               </div>
-              
+
               <div className="text-center p-6 bg-warm-beige/30 rounded-xl border border-warm-brown/20">
                 <Globe className="h-12 w-12 text-warm-brown mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-charcoal mb-2">Curated Selection</h3>
-                <p className="text-sm text-gray-600">Handpicked artworks for discerning collectors</p>
+                <h3 className="text-lg font-semibold text-charcoal mb-2">{t('categories')}</h3>
+                <p className="text-sm text-gray-600">Furniture, appliances, decor, tools, office gear and more</p>
               </div>
-              
+
               <div className="text-center p-6 bg-soft-gray/30 rounded-xl border border-charcoal/20">
                 <Award className="h-12 w-12 text-charcoal mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-charcoal mb-2">Premium Quality</h3>
-                <p className="text-sm text-gray-600">Exceptional craftsmanship and artistic excellence</p>
+                <h3 className="text-lg font-semibold text-charcoal mb-2">{t('items')}</h3>
+                <p className="text-sm text-gray-600">Transparent pricing and honest descriptions</p>
               </div>
             </div>
           </div>
 
-          {/* Collection Stats */}
+          {/* Shop Stats */}
           <div className="mb-12 text-center">
             <div className="inline-flex items-center space-x-8 bg-white/80 backdrop-blur-sm rounded-2xl px-8 py-4 border border-soft-gray">
               <div>
                 <div className="text-2xl font-bold text-warm-brown">{artworks.length}</div>
-                <div className="text-sm text-gray-600">Artworks</div>
+                <div className="text-sm text-gray-600">{t('items')}</div>
               </div>
               <div className="w-px h-8 bg-soft-gray"></div>
               <div>
                 <div className="text-2xl font-bold text-warm-brown">6+</div>
-                <div className="text-sm text-gray-600">Styles</div>
+                <div className="text-sm text-gray-600">{t('categories')}</div>
               </div>
               <div className="w-px h-8 bg-soft-gray"></div>
               <div>
-                <div className="text-2xl font-bold text-warm-brown">Worldwide</div>
-                <div className="text-sm text-gray-600">Artists</div>
+                <div className="text-2xl font-bold text-warm-brown">Local</div>
+                <div className="text-sm text-gray-600">{t('pickup_delivery')}</div>
               </div>
             </div>
           </div>
 
-          {/* Artworks Section */}
+          {/* Items Section */}
           <div className="mb-8">
-            <h2 className="text-3xl font-bold text-charcoal mb-6 text-center">Featured Artworks</h2>
+            <h2 className="text-3xl font-bold text-charcoal mb-6 text-center">{t('featured_items')}</h2>
           </div>
 
           {/* Artworks Display */}

@@ -10,9 +10,12 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Phone, MapPin, Clock, Building2, Users } from "lucide-react";
+import { t, useLanguageChange } from "@/lib/i18n";
 import { useForm, ValidationError } from "@formspree/react";
 
 export default function Contact() {
+  useLanguageChange(); // Subscribe to language changes
+
   const { toast } = useToast();
   const [state, handleSubmit] = useForm("meoloyrn");
 
@@ -34,10 +37,8 @@ export default function Contact() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-charcoal mb-4">Contact Us</h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Have questions about our platform, need help with your account, or want to learn more about selling your art? We're here to help.
-            </p>
+            <h1 className="text-4xl font-bold text-charcoal mb-4">{t('contact_header')}</h1>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">{t('contact_us')}</p>
           </div>
 
           {/* Business Information Cards */}
@@ -124,6 +125,8 @@ export default function Contact() {
                         <SelectItem value="buyer">Buyer Support</SelectItem>
                         <SelectItem value="technical">Technical Issue</SelectItem>
                         <SelectItem value="partnership">Partnership</SelectItem>
+                        <SelectItem value="moving-quote">Moving Quote</SelectItem>
+                        <SelectItem value="moving-installation">Moving & Installation</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -156,12 +159,12 @@ export default function Contact() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Building2 className="h-5 w-5 text-warm-brown" />
-                    About NUVICO Gallery
+                    About NUVICO - Art gallery & Moving services
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600 mb-4">
-                    NUVICO Gallery is a premier contemporary art space dedicated to showcasing exceptional artworks from talented artists worldwide. Our mission is to connect art lovers with extraordinary pieces that inspire and move.
+                    NUVICO - Art gallery & Moving services. We connect art lovers with exceptional pieces and offer professional moving, delivery and installation services.
                   </p>
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">

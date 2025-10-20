@@ -7,13 +7,22 @@ interface ArtworkCardProps {
   artwork: ArtworkWithArtist;
 }
 
+function getPrimaryImage(imageUrl: string): string {
+  try {
+    const parsed = JSON.parse(imageUrl);
+    if (Array.isArray(parsed) && parsed.length > 0) return parsed[0];
+  } catch {}
+  return imageUrl;
+}
+
 export default function ArtworkCard({ artwork }: ArtworkCardProps) {
+  const src = getPrimaryImage(artwork.imageUrl || "/placeholder-artwork.jpg");
   return (
     <Link href={`/artworks/${artwork.id}`}>
       <Card className="cursor-pointer overflow-hidden bg-white border border-gray-200 hover:border-warm-brown transition-colors duration-300 rounded-xl">
         <div className="relative">
           <img
-            src={artwork.imageUrl || "/placeholder-artwork.jpg"}
+            src={src || "/placeholder-artwork.jpg"}
             alt={artwork.title}
             className="w-full h-64 object-cover"
           />

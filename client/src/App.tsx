@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 import Home from "@/pages/Home";
+import Services from "@/pages/Services";
 import Gallery from "@/pages/Gallery";
 import ArtworkDetail from "@/pages/ArtworkDetail";
 import Dashboard from "@/pages/Dashboard";
@@ -24,6 +25,8 @@ function Router() {
       <Route path="/home" component={Home} />
       <Route path="/login" component={Login} />
       <Route path="/gallery" component={Gallery} />
+      <Route path="/shop" component={Gallery} />
+      <Route path="/services" component={Services} />
       <Route path="/artworks/:id" component={ArtworkDetail} />
       <Route path="/about" component={About} />
       <Route path="/contact" component={Contact} />

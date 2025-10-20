@@ -25,7 +25,7 @@ export default function AddArtworkDialog({ open, onOpenChange }: AddArtworkDialo
     title: "",
     description: "",
     price: "",
-    imageUrl: undefined as File | undefined,
+    imageUrl: undefined as File[] | undefined,
     style: "",
     medium: "",
     width: "",
@@ -37,177 +37,98 @@ export default function AddArtworkDialog({ open, onOpenChange }: AddArtworkDialo
 
   const createArtworkMutation = useMutation({
     mutationFn: async (data: any) => {
-      // Handle image upload - compress and resize if needed
+      // Handle multi-image upload: compress up to 5 images and store as JSON array of data URLs
       let imageUrl = data.imageUrl;
-      if (data.imageUrl instanceof File) {
-        try {
-          // Create a compressed version of the image
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          const img = new Image();
-          
-          imageUrl = await new Promise((resolve, reject) => {
-            img.onload = () => {
-              // Calculate new dimensions (max 800x800)
-              const maxSize = 800;
-              let { width, height } = img;
-              
-              if (width > height) {
-                if (width > maxSize) {
-                  height = (height * maxSize) / width;
-                  width = maxSize;
+      if (Array.isArray(data.imageUrl)) {
+        const files: File[] = data.imageUrl.slice(0, 5);
+        const compressedList: string[] = [];
+        for (const f of files) {
+          try {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            const compressed = await new Promise<string>((resolve, reject) => {
+              img.onload = () => {
+                const maxSize = 800;
+                let { width, height } = img as HTMLImageElement;
+                if (width > height) {
+                  if (width > maxSize) { height = (height * maxSize) / width; width = maxSize; }
+                } else {
+                  if (height > maxSize) { width = (width * maxSize) / height; height = maxSize; }
                 }
-              } else {
-                if (height > maxSize) {
-                  width = (width * maxSize) / height;
-                  height = maxSize;
-                }
-              }
-              
-              canvas.width = width;
-              canvas.height = height;
-              
-              // Draw and compress
-              ctx?.drawImage(img, 0, 0, width, height);
-              const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
-              resolve(compressedDataUrl);
-            };
-            
-            img.onerror = () => reject(new Error('Failed to load image'));
-            img.src = URL.createObjectURL(data.imageUrl);
-          });
-        } catch (error) {
-          console.error('Image processing error:', error);
-          toast({
-            title: "Image Processing Error",
-            description: "Failed to process the image. Please try again.",
-            variant: "destructive",
-          });
-          throw error;
+                canvas.width = width;
+                canvas.height = height;
+                ctx?.drawImage(img, 0, 0, width, height);
+                resolve(canvas.toDataURL('image/jpeg', 0.8));
+              };
+              img.onerror = () => reject(new Error('Failed to load image'));
+              img.src = URL.createObjectURL(f);
+            });
+            compressedList.push(compressed);
+          } catch (e) {
+            console.error('Image processing error:', e);
+          }
         }
+        imageUrl = JSON.stringify(compressedList);
       }
-      
-      const validatedData = insertArtworkSchema.parse({
-        ...data,
-        imageUrl: imageUrl,
-        price: data.price.toString(), // Ensure price is string as per schema
-        width: data.width ? parseInt(data.width) : null,
-        height: data.height ? parseInt(data.height) : null,
-        year: data.year ? parseInt(data.year) : null
-      });
-      
-      await apiRequest("/api/artworks", "POST", validatedData);
+ 
+      try {
+        const res = await apiRequest("/api/artworks", "POST", {
+          title: data.title,
+          description: data.description || null,
+          price: data.price,
+          imageUrl,
+          style: data.style || null,
+          medium: data.medium || null,
+          width: data.width ? Number(data.width) : null,
+          height: data.height ? Number(data.height) : null,
+          year: data.year ? Number(data.year) : null,
+          isAvailable: data.isAvailable,
+          isFeatured: data.isFeatured,
+        });
+        const created = await res.json();
+        return created;
+      } catch (error: any) {
+        if (isUnauthorizedError(error)) {
+          window.location.href = "/login";
+        }
+        throw error;
+      }
     },
     onSuccess: () => {
+      toast({ title: "Success", description: "Artwork added successfully!" });
       queryClient.invalidateQueries({ queryKey: ["/api/my-artworks"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/artworks"] });
-      toast({
-        title: "Success",
-        description: "Artwork added successfully!",
-      });
       onOpenChange(false);
-      resetForm();
     },
-    onError: (error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-        return;
-      }
-      toast({
-        title: "Error",
-        description: "Failed to add artwork. Please try again.",
-        variant: "destructive",
-      });
-    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to add artwork", variant: "destructive" });
+    }
   });
 
-  const resetForm = () => {
-    setFormData({
-      title: "",
-      description: "",
-      price: "",
-      imageUrl: undefined as File | undefined,
-      style: "",
-      medium: "",
-      width: "",
-      height: "",
-      year: "",
-      isAvailable: true,
-      isFeatured: false
-    });
-  };
-
-  const handleChange = (field: string, value: string | boolean | File | undefined) => {
-    if (field === "imageUrl" && value instanceof File) {
-      // Check file size (limit to 5MB)
-      const maxSize = 5 * 1024 * 1024; // 5MB
-      if (value.size > maxSize) {
-        toast({
-          title: "File Too Large",
-          description: "Image size must be less than 5MB. Please choose a smaller image.",
-          variant: "destructive",
-        });
-        return;
-      }
-      
-      // Check file type
-      if (!value.type.startsWith('image/')) {
-        toast({
-          title: "Invalid File Type",
-          description: "Please select an image file (JPEG, PNG, etc.).",
-          variant: "destructive",
-        });
-        return;
-      }
-    }
-    
+  const handleChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.title || !formData.price || !formData.imageUrl) {
-      toast({
-        title: "Validation Error",
-        description: "Title, price, and image URL are required fields.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     createArtworkMutation.mutate(formData);
   };
 
   const styles = [
     "Abstract",
-    "Landscape", 
-    "Portrait",
     "Contemporary",
-    "Still Life",
-    "Geometric",
-    "Expressionist",
     "Impressionist",
-    "Realist",
-    "Surreal"
+    "Surrealism",
+    "Realism",
+    "Pop Art",
   ];
 
   const mediums = [
-    "Oil on Canvas",
-    "Acrylic on Canvas",
+    "Oil",
+    "Acrylic",
     "Watercolor",
-    "Digital Art",
+    "Digital",
     "Mixed Media",
-    "Charcoal",
-    "Pencil",
-    "Pastel",
     "Ink",
     "Collage"
   ];
@@ -253,7 +174,7 @@ export default function AddArtworkDialog({ open, onOpenChange }: AddArtworkDialo
             </div>
 
             <div>
-              <Label htmlFor="price">Price (USD) *</Label>
+              <Label htmlFor="price">Price (CHF) *</Label>
               <Input
                 id="price"
                 type="number"
@@ -267,132 +188,77 @@ export default function AddArtworkDialog({ open, onOpenChange }: AddArtworkDialo
             </div>
 
             <div>
-              <Label htmlFor="imageUrl">Image *</Label>
+              <Label htmlFor="imageUrl">Images (up to 5)</Label>
               <Input
                 id="imageUrl"
                 type="file"
                 accept="image/*"
-                onChange={(e) => handleChange("imageUrl", e.target.files?.[0])}
-                placeholder="https://example.com/image.jpg"
-                required
+                multiple
+                onChange={(e) => handleChange("imageUrl", e.target.files ? Array.from(e.target.files).slice(0,5) : undefined)}
               />
-              <p className="text-sm text-gray-500 mt-1">
-                Upload an image file (JPEG, PNG, etc.) under 5MB. Images will be automatically compressed and resized.
-              </p>
             </div>
           </div>
 
-          {/* Artwork Details */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-charcoal">Artwork Details</h3>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="style">Style</Label>
-                <Select value={formData.style} onValueChange={(value) => handleChange("style", value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select style" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {styles.map((style) => (
-                      <SelectItem key={style} value={style}>{style}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label htmlFor="medium">Medium</Label>
-                <Select value={formData.medium} onValueChange={(value) => handleChange("medium", value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select medium" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {mediums.map((medium) => (
-                      <SelectItem key={medium} value={medium}>{medium}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+          {/* Attributes */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="style">Style</Label>
+              <Select onValueChange={(v) => handleChange("style", v)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select style" />
+                </SelectTrigger>
+                <SelectContent>
+                  {styles.map((s) => (
+                    <SelectItem key={s} value={s}>{s}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <Label htmlFor="width">Width (cm)</Label>
-                <Input
-                  id="width"
-                  type="number"
-                  min="1"
-                  value={formData.width}
-                  onChange={(e) => handleChange("width", e.target.value)}
-                  placeholder="50"
-                />
-              </div>
+            <div>
+              <Label htmlFor="medium">Medium</Label>
+              <Select onValueChange={(v) => handleChange("medium", v)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select medium" />
+                </SelectTrigger>
+                <SelectContent>
+                  {mediums.map((m) => (
+                    <SelectItem key={m} value={m}>{m}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-              <div>
-                <Label htmlFor="height">Height (cm)</Label>
-                <Input
-                  id="height"
-                  type="number"
-                  min="1"
-                  value={formData.height}
-                  onChange={(e) => handleChange("height", e.target.value)}
-                  placeholder="70"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="year">Year</Label>
-                <Input
-                  id="year"
-                  type="number"
-                  min="1900"
-                  max={new Date().getFullYear()}
-                  value={formData.year}
-                  onChange={(e) => handleChange("year", e.target.value)}
-                  placeholder="2024"
-                />
-              </div>
+            <div>
+              <Label htmlFor="width">Width (cm)</Label>
+              <Input id="width" type="number" value={formData.width} onChange={(e) => handleChange("width", e.target.value)} />
+            </div>
+            <div>
+              <Label htmlFor="height">Height (cm)</Label>
+              <Input id="height" type="number" value={formData.height} onChange={(e) => handleChange("height", e.target.value)} />
+            </div>
+            <div>
+              <Label htmlFor="year">Year</Label>
+              <Input id="year" type="number" value={formData.year} onChange={(e) => handleChange("year", e.target.value)} />
             </div>
           </div>
 
-          {/* Preview */}
-          {formData.imageUrl && (
-            <div className="space-y-2">
-              <Label>Preview</Label>
-              <div className="relative w-full h-48 bg-gray-100 rounded-lg overflow-hidden">
-                <img
-                  src={formData.imageUrl ? URL.createObjectURL(formData.imageUrl) : ""}
-                  alt="Preview"
-                  className="w-full h-full object-cover"
-                  onError={() => {
-                    toast({
-                      title: "Invalid Image URL",
-                      description: "The image URL you provided cannot be loaded.",
-                      variant: "destructive",
-                    });
-                  }}
-                />
-              </div>
+          {/* Availability */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex items-center gap-2">
+              <input id="available" type="checkbox" checked={formData.isAvailable} onChange={(e) => handleChange("isAvailable", e.target.checked)} />
+              <Label htmlFor="available">Available</Label>
             </div>
-          )}
+            <div className="flex items-center gap-2">
+              <input id="featured" type="checkbox" checked={formData.isFeatured} onChange={(e) => handleChange("isFeatured", e.target.checked)} />
+              <Label htmlFor="featured">Featured</Label>
+            </div>
+          </div>
 
-          {/* Actions */}
-          <div className="flex justify-end space-x-4 pt-4 border-t">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={createArtworkMutation.isPending}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              className="warm-brown text-white hover:golden-brown"
-              disabled={createArtworkMutation.isPending}
-            >
-              {createArtworkMutation.isPending ? "Adding..." : "Add Artwork"}
+          <div className="flex justify-end gap-3">
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+            <Button type="submit" disabled={createArtworkMutation.isPending}>
+              {createArtworkMutation.isPending ? "Saving..." : "Add Artwork"}
             </Button>
           </div>
         </form>

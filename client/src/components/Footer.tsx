@@ -1,14 +1,17 @@
 import { Link } from "wouter";
+import { t, useLanguageChange } from '@/lib/i18n';
+import { useState, useEffect } from "react";
 
 export default function Footer() {
+  useLanguageChange(); // Subscribe to language changes
   return (
     <footer className="bg-gray-100 text-black py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
-            <div className="text-2xl font-bold text-warm-brown mb-4">NUVICO</div>
+            <div className="text-2xl font-bold text-warm-brown mb-4">{t('footer_title')}</div>
             <p className="text-gray-800 mb-6 leading-relaxed">
-              Connecting artists and collectors through exceptional art experiences.
+              {t('footer_short_desc')}
             </p>
             <div className="flex space-x-4">
               <a 
@@ -25,39 +28,39 @@ export default function Footer() {
             </div>
           </div>
           <div>
-            <h3 className="font-semibold mb-4 text-black">Explore</h3>
+            <h3 className="font-semibold mb-4 text-black">{t('explore')}</h3>
             <ul className="space-y-2 text-gray-800">
-              <li><Link href="/gallery"><span className="hover:text-warm-brown transition-colors cursor-pointer">Gallery</span></Link></li>
-              <li><Link href="/"><span className="hover:text-warm-brown transition-colors cursor-pointer">Collections</span></Link></li>
-              <li><Link href="/about"><span className="hover:text-warm-brown transition-colors cursor-pointer">About Gallery</span></Link></li>
-              <li><Link href="/contact"><span className="hover:text-warm-brown transition-colors cursor-pointer">Visit Us</span></Link></li>
+              <li><Link href="/gallery"><span className="hover:text-warm-brown transition-colors cursor-pointer">{t('gallery')}</span></Link></li>
+              <li><Link href="/"><span className="hover:text-warm-brown transition-colors cursor-pointer">{t('collections')}</span></Link></li>
+              <li><Link href="/about"><span className="hover:text-warm-brown transition-colors cursor-pointer">{t('about_gallery')}</span></Link></li>
+              <li><Link href="/contact"><span className="hover:text-warm-brown transition-colors cursor-pointer">{t('visit_us')}</span></Link></li>
             </ul>
           </div>
           <div>
-            <h3 className="font-semibold mb-4 text-black">Services</h3>
+            <h3 className="font-semibold mb-4 text-black">{t('services')}</h3>
             <ul className="space-y-2 text-gray-800">
-              <li><Link href="/contact"><span className="hover:text-warm-brown transition-colors cursor-pointer">Art Consultation</span></Link></li>
-              <li><Link href="/contact"><span className="hover:text-warm-brown transition-colors cursor-pointer">Gallery Services</span></Link></li>
-              <li><Link href="/contact"><span className="hover:text-warm-brown transition-colors cursor-pointer">Private Viewings</span></Link></li>
-              <li><Link href="/contact"><span className="hover:text-warm-brown transition-colors cursor-pointer">Art Advisory</span></Link></li>
+              <li><Link href="/contact"><span className="hover:text-warm-brown transition-colors cursor-pointer">{t('art_consultation')}</span></Link></li>
+              <li><Link href="/contact"><span className="hover:text-warm-brown transition-colors cursor-pointer">{t('gallery_services')}</span></Link></li>
+              <li><Link href="/contact"><span className="hover:text-warm-brown transition-colors cursor-pointer">{t('private_viewings')}</span></Link></li>
+              <li><Link href="/contact"><span className="hover:text-warm-brown transition-colors cursor-pointer">{t('art_advisory')}</span></Link></li>
             </ul>
           </div>
           <div>
-            <h3 className="font-semibold mb-4 text-black">Support</h3>
+            <h3 className="font-semibold mb-4 text-black">{t('support')}</h3>
             <ul className="space-y-2 text-gray-800">
-              <li><Link href="/contact"><span className="hover:text-warm-brown transition-colors cursor-pointer">Gallery Hours</span></Link></li>
-              <li><Link href="/contact"><span className="hover:text-warm-brown transition-colors cursor-pointer">Contact Us</span></Link></li>
-              <li><Link href="/contact"><span className="hover:text-warm-brown transition-colors cursor-pointer">Location</span></Link></li>
-              <li><Link href="/contact"><span className="hover:text-warm-brown transition-colors cursor-pointer">Appointments</span></Link></li>
+              <li><Link href="/contact"><span className="hover:text-warm-brown transition-colors cursor-pointer">{t('gallery_hours')}</span></Link></li>
+              <li><Link href="/contact"><span className="hover:text-warm-brown transition-colors cursor-pointer">{t('contact_us')}</span></Link></li>
+              <li><Link href="/contact"><span className="hover:text-warm-brown transition-colors cursor-pointer">{t('location')}</span></Link></li>
+              <li><Link href="/contact"><span className="hover:text-warm-brown transition-colors cursor-pointer">{t('appointments')}</span></Link></li>
             </ul>
           </div>
         </div>
         <div className="border-t border-gray-400 mt-12 pt-8 flex flex-col sm:flex-row justify-between items-center">
-          <p className="text-gray-800 text-sm">© 2024 NUVICO. All rights reserved.</p>
+          <p className="text-gray-800 text-sm">© 2024 {t('footer_title')}. {t('all_rights_reserved')}</p>
           <div className="flex space-x-6 mt-4 sm:mt-0">
-            <a href="#" className="text-gray-800 hover:text-warm-brown text-sm transition-colors">Privacy Policy</a>
-            <a href="#" className="text-gray-800 hover:text-warm-brown text-sm transition-colors">Terms of Service</a>
-            <a href="#" className="text-gray-800 hover:text-warm-brown text-sm transition-colors">Cookie Policy</a>
+            <a href="#" className="text-gray-800 hover:text-warm-brown text-sm transition-colors">{t('privacy_policy')}</a>
+            <a href="#" className="text-gray-800 hover:text-warm-brown text-sm transition-colors">{t('terms_of_service')}</a>
+            <a href="#" className="text-gray-800 hover:text-warm-brown text-sm transition-colors">{t('cookie_policy')}</a>
           </div>
         </div>
       </div>

@@ -8,19 +8,23 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Menu, User, Settings, LogOut, Palette } from "lucide-react";
+import { Menu, User, Settings, LogOut, Palette, Languages } from "lucide-react";
+import { t, getLang, setLang, useLanguageChange } from "@/lib/i18n";
 
 export default function Navigation() {
+  useLanguageChange(); // Subscribe to language changes
+  
   const { user, isAdmin } = useAuth();
   const [location, setLocation] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { toast } = useToast();
 
   const navigation = [
-    { name: "Home", href: "/" },
-    { name: "Gallery", href: "/gallery" },
-    { name: "About", href: "/about" },
-    { name: "Contact", href: "/contact" },
+    { name: t("nav_home"), href: "/" },
+    { name: t("nav_services"), href: "/services" },
+    { name: t("nav_shop"), href: "/shop" },
+    { name: t("nav_about"), href: "/about" },
+    { name: t("nav_contact"), href: "/contact" },
   ];
 
   const logoutMutation = useMutation({
@@ -82,7 +86,19 @@ export default function Navigation() {
           </div>
 
           {/* Right Side */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
+            {/* Language Switcher */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="px-2 py-1 h-8">
+                  <Languages className="h-4 w-4 mr-1" /> {getLang().toUpperCase()}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem className="cursor-pointer" onClick={() => setLang('de')}>DE</DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer" onClick={() => setLang('en')}>EN</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             {user ? (
               <>
                 {/* Admin Panel Link - only show for admin users */}
@@ -150,7 +166,7 @@ export default function Navigation() {
                   size="sm"
                   className="border-warm-brown text-warm-brown hover:bg-warm-brown hover:text-white"
                 >
-                  Sign In
+                  {t('sign_in')}
                 </Button>
               </Link>
             )}

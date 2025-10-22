@@ -238,7 +238,7 @@ export default function Home() {
                 </div>
                 <h3 className="font-semibold text-lg mb-2">{t('phone')}</h3>
                 <p className="text-gray-600 text-sm">
-                  +41 76 451 93 98
+                  +41 76 527 82 93
                 </p>
               </CardContent>
             </Card>

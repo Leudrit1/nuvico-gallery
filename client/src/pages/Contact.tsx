@@ -85,7 +85,7 @@ export default function Contact() {
                   Multiple ways to reach our team for support
                 </p>
                 <div className="text-sm text-warm-brown font-medium">
-                  <p>+41 76 451 93 98</p>
+                  <p>+41 76 527 82 93</p>
                   <p>+41 79 782 50 77</p>
                   <p>info@nuvico.ch</p>
                 </div>
